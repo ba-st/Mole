@@ -1,4 +1,0 @@
-testing
-isAcyclic
-
-	self subclassResponsibility

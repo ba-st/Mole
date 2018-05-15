@@ -1,4 +1,0 @@
-testing
-convergesToSelf
-	
-	^source = target

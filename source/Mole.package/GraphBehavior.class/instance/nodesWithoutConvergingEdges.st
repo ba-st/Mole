@@ -1,4 +1,0 @@
-accessing
-nodesWithoutConvergingEdges
-
-	self subclassResponsibility

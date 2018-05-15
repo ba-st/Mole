@@ -1,4 +1,0 @@
-path finding - private
-emptyCollection
-	
-	^#()

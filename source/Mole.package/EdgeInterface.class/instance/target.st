@@ -1,4 +1,0 @@
-accessing
-target
-
-	self subclassResponsibility
