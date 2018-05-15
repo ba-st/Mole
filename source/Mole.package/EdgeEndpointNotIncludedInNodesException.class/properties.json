@@ -1,0 +1,15 @@
+{
+	"commentStamp" : "",
+	"super" : "Error",
+	"category" : "Mole",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"invalidEdge",
+		"edges",
+		"nodes"
+	],
+	"name" : "EdgeEndpointNotIncludedInNodesException",
+	"type" : "normal"
+}

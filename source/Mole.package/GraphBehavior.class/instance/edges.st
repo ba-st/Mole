@@ -1,0 +1,4 @@
+accessing
+edges
+
+	self subclassResponsibility

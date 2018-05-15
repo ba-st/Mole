@@ -1,0 +1,15 @@
+{
+	"commentStamp" : "",
+	"super" : "GraphBehavior",
+	"category" : "Mole",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"edges",
+		"acyclic",
+		"nodes"
+	],
+	"name" : "Graph",
+	"type" : "normal"
+}

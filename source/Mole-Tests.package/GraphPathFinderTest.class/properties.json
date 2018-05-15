@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "",
+	"super" : "TestCase",
+	"category" : "Mole-Tests",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"finder",
+		"graph"
+	],
+	"name" : "GraphPathFinderTest",
+	"type" : "normal"
+}
