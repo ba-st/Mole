@@ -1,0 +1,18 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'Mole',
+      #directory : 'source',
+      #load : [ 'Development' ],
+      #platforms : [  #pharo ]
+    }
+  ],
+  #testing : {
+    #coverage : {
+       #packages : [  'Mole' ]
+    },
+    #include : {
+       #packages : [ 'Mole-Tests' ]
+    }
+  }
+}
