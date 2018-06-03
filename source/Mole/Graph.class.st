@@ -1,259 +1,74 @@
+"
+I'm an abstract class representing a graph consisting of a set of vertices (also called nodes) and a set of edges (also called links, or arcs); each edge connects nodes to each other. 
+
+Implementation details
+
+- I'm an immutable representation
+"
 Class {
 	#name : #Graph,
-	#superclass : #GraphBehavior,
-	#instVars : [
-		'edges',
-		'acyclic',
-		'nodes'
-	],
+	#superclass : #Object,
 	#category : #Mole
 }
 
-{ #category : #preconditions }
-Graph class >> assert: aCollectionOfEdges endpointsIncludedIn: aCollectionOfNodes [
+{ #category : #'Instance creation' }
+Graph class >> withVertices: aVertexCollection andEdges: anEdgeCollection [
 
-	aCollectionOfEdges do: [:edge |
-		((aCollectionOfNodes includes: edge source) and: [aCollectionOfNodes includes: edge target])
-			ifFalse: [
-				EdgeEndpointNotIncludedInNodesException
-					signalInvalidEdge: edge
-					edges: aCollectionOfEdges
-					nodes: aCollectionOfNodes]]
-
-
-
+	^ self subclassResponsibility
 ]
 
-{ #category : #'instance creation' }
-Graph class >> edges: aCollectionOfEdges [
-
-	| nodes |
-
-	nodes :=
-		aCollectionOfEdges
-			inject: Set new
-			into: [:set :edge |
-				set
-					add: edge source;
-					add: edge target;
-					yourself].
-
-	^self edges: aCollectionOfEdges nodes: nodes
-]
-
-{ #category : #'instance creation' }
-Graph class >> edges: aCollectionOfEdges nodes: aCollectionOfNodes [
-
-	self assert: aCollectionOfEdges endpointsIncludedIn: aCollectionOfNodes.
-	^self new
-		initializeEdges: aCollectionOfEdges copy
-		nodes: aCollectionOfNodes copy
-]
-
-{ #category : #comparing }
-Graph >> = anotherGraph [
-
-	^self class = anotherGraph class
-		and: [(self sameEdgesAs: anotherGraph) and: [self sameNodesAs: anotherGraph]]
-]
-
-{ #category : #accessing }
-Graph >> apply: aOneArgBlock usingDepthFirstSearchFrom: aNode [
-
-	self apply: aOneArgBlock usingDepthFirstSearchFrom: aNode ignoring: Set new
-	
-]
-
-{ #category : #'accessing - private' }
-Graph >> apply: aOneArgBlock usingDepthFirstSearchFrom: aNode ignoring: aSet [
-
-	^self
-		apply: aOneArgBlock
-		usingDepthFirstSearchFrom: aNode
-		ignoring: aSet
-		ifCycleEncounteredDo: []
-]
-
-{ #category : #'accessing - private' }
-Graph >> apply: aOneArgBlock usingDepthFirstSearchFrom: aNode ignoring: aSet ifCycleEncounteredDo: aBlock [
-
-	| nonVisitedNodes adjacentNodes |
-
-	aOneArgBlock value: aNode.
-
-	aSet add: aNode.
-
-	adjacentNodes := self nodesAdjacentTo: aNode.
-	nonVisitedNodes := adjacentNodes reject: [:adjacentNode | aSet includes: adjacentNode].
-
-	(adjacentNodes size = nonVisitedNodes size) ifFalse: [aBlock].
-
-	nonVisitedNodes do: [:nonVisitedNode |
-		self
-			apply: aOneArgBlock
-			usingDepthFirstSearchFrom: nonVisitedNode
-			ignoring: aSet
-			ifCycleEncounteredDo: aBlock]
-]
-
-{ #category : #preconditions }
-Graph >> assertIncludesAllNodesOf: aCollectionOfNodes [
-
-	aCollectionOfNodes do: [:node |
-		(nodes includes: node) ifFalse: [NodeNotFoundException signalNode: node graph: self]]
-
-
-]
-
-{ #category : #accessing }
+{ #category : #'private - accessing' }
 Graph >> edges [
-	
-	^edges copy
-]
 
-{ #category : #accessing }
-Graph >> edgesConvergingTo: aNode [
-
-	^edges select: [ :anEdge | anEdge convergesTo: aNode ].
-]
-
-{ #category : #accessing }
-Graph >> edgesConvergingToSelf [
-
-	^edges select: [:anEdge | anEdge convergesToSelf]
-]
-
-{ #category : #accessing }
-Graph >> edgesStartingOn: aNode [
-
-	^edges select: [ :anEdge | anEdge startsOn: aNode ].
-]
-
-{ #category : #accessing }
-Graph >> hash [
-
-	| edgesHash nodesHash |
-
-	edgesHash := edges inject: 0 into: [:hashNumber :anEdge | hashNumber bitXor: anEdge hash].
-	nodesHash := nodes inject: 0 into: [:hashNumber :aNode | hashNumber bitXor: aNode hash].
-
-	^edgesHash bitXor: nodesHash
+	^ self subclassResponsibility
 ]
 
 { #category : #testing }
-Graph >> includesNode: aNode [
+Graph >> includesVertex: aVertex [
 
-	^nodes includes: aNode
-]
-
-{ #category : #initialization }
-Graph >> initializeAcyclicValue [
-
-	| startingNodes visitedNodes |
-
-	startingNodes := self nodesWithoutStartingEdges.
-	visitedNodes := Set new.
-
-	startingNodes do: [:startingNode |
-		self
-			apply: [:eachNode | ]
-			usingDepthFirstSearchFrom: startingNode
-			ignoring: visitedNodes
-			ifCycleEncounteredDo: [
-				acyclic := false.
-				^self]].
-
-	acyclic := edges isEmpty or: [startingNodes notEmpty]
-]
-
-{ #category : #initialization }
-Graph >> initializeEdges: aCollectionOfEdges nodes: aCollectionOfNodes [
-
-	edges := aCollectionOfEdges asOrderedCollection.
-	nodes := aCollectionOfNodes asSet
-	
-
+	^ self vertices includes: aVertex
 ]
 
 { #category : #testing }
-Graph >> isAcyclic [
+Graph >> is: aVertex adjacentTo: anotherVertex [
 
-	acyclic isNil ifTrue: [self initializeAcyclicValue].
-
-	^acyclic
-]
-
-{ #category : #testing }
-Graph >> isEmpty [
-
-	^nodes isEmpty
+	^ self edges anySatisfy: [ :edge | (edge isIncidentTo: aVertex) and: [ edge isIncidentTo: anotherVertex ] ]
 ]
 
 { #category : #accessing }
-Graph >> nodes [
+Graph >> neighborsOf: aVertex [
 
-	^nodes copy
+	"Returns the vertices that are connected to aVertex"
+
+	^ self edges select: [ :edge | edge isIncidentTo: aVertex ] thenCollect: [ :edge | edge vertexRelatedTo: aVertex ]
 ]
 
 { #category : #accessing }
-Graph >> nodesWithoutConvergingEdges [
+Graph >> order [
 
-	^nodes select: [:node | (self edgesConvergingTo: node) isEmpty]
+	"The number of vertices"
+
+	^ self vertices size
 ]
 
 { #category : #accessing }
-Graph >> nodesWithoutStartingEdges [
+Graph >> size [
 
-	^nodes select: [:node | (self edgesStartingOn: node) isEmpty]
+	"The number of edges"
+
+	^ self edges  size
 ]
 
-{ #category : #testing }
-Graph >> notEmpty [
+{ #category : #'private - accessing' }
+Graph >> vertices [
 
-	^self isEmpty not
+	^ self subclassResponsibility
 ]
 
-{ #category : #'removing nodes' }
-Graph >> removeNode: anObject ifAbsent: aBlock [
+{ #category : #converting }
+Graph >> withoutVertex: aVertex [
 
-	| nodesWithoutNode edgesWithoutNode |
+	"Returns a new graph excluding the vertex and all it's incident edges"
 
-	(nodes includes: anObject) ifFalse: [^aBlock value].
-
-	nodesWithoutNode := nodes reject: [:node | node = anObject].
-	edgesWithoutNode := edges reject: [:edge | edge isIncidentTo: anObject].
-
-	^self class edges: edgesWithoutNode nodes: nodesWithoutNode
-]
-
-{ #category : #'removing nodes' }
-Graph >> removeNodes: aCollectionOfNodes [
-
-	| nodesWithoutNodes edgesWithoutNode |
-
-	self assertIncludesAllNodesOf: aCollectionOfNodes.
-
-	nodesWithoutNodes := nodes reject: [:node | aCollectionOfNodes includes: node].
-	edgesWithoutNode :=
-		edges reject: [:edge | aCollectionOfNodes anySatisfy: [:node | edge isIncidentTo: node]].
-
-	^self class edges: edgesWithoutNode nodes: nodesWithoutNodes
-]
-
-{ #category : #testing }
-Graph >> sameEdgesAs: anotherGraph [
-
-	| anotherEdges |
-
-	anotherEdges := anotherGraph edges.
-	^edges size = anotherEdges size and: [edges allSatisfy: [:edge | anotherEdges includes: edge]]
-]
-
-{ #category : #testing }
-Graph >> sameNodesAs: anotherGraph [
-
-	| anotherNodes |
-
-	anotherNodes := anotherGraph nodes.
-	^nodes size = anotherNodes size and: [nodes allSatisfy: [:node | anotherNodes includes: node]]
+	^ self class withVertices: (self vertices copyWithout: aVertex) andEdges: (self edges reject: [ :edge | edge isIncidentTo: aVertex ])
 ]
