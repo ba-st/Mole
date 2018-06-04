@@ -6,13 +6,20 @@ Class {
 	#superclass : #Graph,
 	#instVars : [
 		'vertices',
-		'edges'
+		'edges',
+		'isAcyclic'
 	],
 	#category : #Mole
 }
 
+{ #category : #'private - testing' }
+DirectedGraph class >> isCompatible: anEdge [
+
+	^ anEdge isDirected
+]
+
 { #category : #'Instance creation' }
-DirectedGraph class >> withVertices: aVertexCollection andEdges: anEdgeCollection [
+DirectedGraph class >> withValidVertices: aVertexCollection andEdges: anEdgeCollection [
 
 	^ self new initializeWithVertices: aVertexCollection asSet andEdges: anEdgeCollection asSet
 ]
@@ -49,9 +56,22 @@ DirectedGraph >> initializeWithVertices: aVertexCollection andEdges: anEdgeColle
 ]
 
 { #category : #testing }
+DirectedGraph >> isAcyclic [
+
+	isAcyclic
+		ifNil: [ | currentGraph verticesSurelyNotInCycles |
+
+			currentGraph := self.
+			[ verticesSurelyNotInCycles := currentGraph verticesWithoutIncomingEdges.
+			verticesSurelyNotInCycles notEmpty ] whileTrue: [ currentGraph := currentGraph withoutVertices: verticesSurelyNotInCycles ].
+			isAcyclic := currentGraph order = 0 ].
+	^ isAcyclic
+]
+
+{ #category : #testing }
 DirectedGraph >> isCyclic [
 
-	self halt
+	^ self isAcyclic not
 ]
 
 { #category : #accessing }
@@ -60,8 +80,34 @@ DirectedGraph >> outgoingDegreeOf: aVertex [
 	^ (self edgesOutgoingFrom: aVertex) size
 ]
 
+{ #category : #accessing }
+DirectedGraph >> topologicalSort [
+
+	"If the graph is acyclic returns a topological sort of its vertices."
+
+	| topologicalSort currentGraph |
+
+	topologicalSort := OrderedCollection new: self order.
+	currentGraph := self.
+
+	[ currentGraph order strictlyPositive ]
+		whileTrue: [ | currentVertices |
+
+			currentVertices := currentGraph verticesWithoutIncomingEdges.
+			AssertionChecker enforce: [ currentVertices notEmpty ] because: 'Cannot get a topological sort on a cyclic graph.'.
+			topologicalSort addAll: currentVertices.
+			currentGraph := currentGraph withoutVertices: currentVertices ].
+	^ topologicalSort asArray
+]
+
 { #category : #'private - accessing' }
 DirectedGraph >> vertices [
 
 	^ vertices
+]
+
+{ #category : #'private - accessing' }
+DirectedGraph >> verticesWithoutIncomingEdges [
+
+	^ vertices select: [ :vertex | (self incomingDegreeOf: vertex) = 0 ]
 ]

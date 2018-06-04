@@ -18,11 +18,9 @@ DirectedEdge class >> from: from to: to [
 ]
 
 { #category : #comparing }
-DirectedEdge >> = anotherEdge [
+DirectedEdge >> = anObject [
 
-	^self class = anotherEdge class 
-		ifTrue: [ source = anotherEdge source and: [ target = anotherEdge target ]]
-		ifFalse: [ false ]
+	^ self class = anObject class and: [ anObject goesFrom: source to: target ]
 ]
 
 { #category : #testing }
@@ -32,18 +30,12 @@ DirectedEdge >> convergesTo: anObject [
 ]
 
 { #category : #testing }
-DirectedEdge >> convergesToSelf [
-	
-	^source = target
-]
-
-{ #category : #testing }
 DirectedEdge >> goesFrom: aSourceVertex to: aTargetVertex [
 
 	^ (self startsOn: aSourceVertex) and: [ self convergesTo: aTargetVertex ]
 ]
 
-{ #category : #accessing }
+{ #category : #comparing }
 DirectedEdge >> hash [
 
 	^source hash bitXor: target hash

@@ -22,6 +22,12 @@ Edge >> isIncidentTo: aVertex [
 	^ self subclassResponsibility
 ]
 
+{ #category : #testing }
+Edge >> isSelfLoop [
+
+	^ self relatedVertices size = 1
+]
+
 { #category : #private }
 Edge >> relatedVertices [
 

@@ -20,7 +20,13 @@ UndirectedGraphBuilder >> addVertex: aVertex [
 { #category : #building }
 UndirectedGraphBuilder >> build [
 
-	^ UndirectedGraph withVertices: vertices andEdges: edges
+	^ self graphClass withValidVertices: vertices andEdges: edges
+]
+
+{ #category : #acccessing }
+UndirectedGraphBuilder >> graphClass [
+
+	^ UndirectedGraph
 ]
 
 { #category : #initialization }
@@ -34,16 +40,15 @@ UndirectedGraphBuilder >> initialize [
 { #category : #adding }
 UndirectedGraphBuilder >> relate: aVertex to: anotherVertex [
 
-	edges
-		add:
-			(UndirectedEdge
-				relating:
-					{aVertex.
-					anotherVertex})
+	self
+		addVertex: aVertex;
+		addVertex: anotherVertex.
+	edges add: (UndirectedEdge relating: {aVertex. anotherVertex})
 ]
 
 { #category : #adding }
 UndirectedGraphBuilder >> selfRelate: aVertex [
 
+	self addVertex: aVertex.
 	edges add: (UndirectedEdge relating: {aVertex})
 ]

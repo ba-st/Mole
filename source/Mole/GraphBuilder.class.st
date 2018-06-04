@@ -24,3 +24,9 @@ GraphBuilder >> build [
 
 	^ self subclassResponsibility
 ]
+
+{ #category : #accessing }
+GraphBuilder >> graphClass [
+
+	^ self subclassResponsibility
+]

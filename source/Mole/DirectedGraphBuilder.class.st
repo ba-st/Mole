@@ -20,13 +20,22 @@ DirectedGraphBuilder >> addVertex: aVertex [
 { #category : #building }
 DirectedGraphBuilder >> build [
 
-	^ DirectedGraph withVertices: vertices andEdges: edges
+	^ self graphClass withValidVertices: vertices andEdges: edges
 ]
 
 { #category : #adding }
 DirectedGraphBuilder >> connect: aSourceVertex to: aTargetVertex [
 
+	self
+		addVertex: aSourceVertex;
+		addVertex: aTargetVertex.
 	edges add: (DirectedEdge from: aSourceVertex to: aTargetVertex)
+]
+
+{ #category : #acccessing }
+DirectedGraphBuilder >> graphClass [
+
+	^ DirectedGraph
 ]
 
 { #category : #initialization }

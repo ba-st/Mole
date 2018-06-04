@@ -11,10 +11,40 @@ Class {
 	#category : #Mole
 }
 
+{ #category : #'private - testing' }
+Graph class >> endpointsOf: edges areIncludedIn: vertices [
+
+	^ edges allSatisfy: [ :edge | vertices includesAll: edge relatedVertices ]
+]
+
+{ #category : #'private - testing' }
+Graph class >> isCompatible: anEdge [
+
+	"Returns if the edge is compatible with this kind of graph"
+
+	^ self subclassResponsibility
+]
+
+{ #category : #'Instance creation' }
+Graph class >> withValidVertices: aVertexCollection andEdges: anEdgeCollection [
+
+	"This instance creation method will skip the assertions and it's not intended to be use used by code external to the package"
+
+	^ self subclassResponsibility
+]
+
 { #category : #'Instance creation' }
 Graph class >> withVertices: aVertexCollection andEdges: anEdgeCollection [
 
-	^ self subclassResponsibility
+	AssertionCheckerBuilder new
+		raising: InstanceCreationFailed;
+		checking: [ :asserter | 
+			asserter
+				enforce: [ self endpointsOf: anEdgeCollection areIncludedIn: aVertexCollection ] because: 'Some edge has endpoints not included in the vertices.';
+				enforce: [ anEdgeCollection allSatisfy: [ :edge | self isCompatible: edge ] ] because: 'Some edge is incompatible with this type of graph.' ];
+		buildAndCheck.
+
+	^ self withValidVertices: aVertexCollection andEdges: anEdgeCollection
 ]
 
 { #category : #'private - accessing' }
@@ -52,6 +82,12 @@ Graph >> order [
 ]
 
 { #category : #accessing }
+Graph >> selfLoops [
+
+	^ self edges select: [ :edge | edge isSelfLoop ]
+]
+
+{ #category : #accessing }
 Graph >> size [
 
 	"The number of edges"
@@ -70,5 +106,13 @@ Graph >> withoutVertex: aVertex [
 
 	"Returns a new graph excluding the vertex and all it's incident edges"
 
-	^ self class withVertices: (self vertices copyWithout: aVertex) andEdges: (self edges reject: [ :edge | edge isIncidentTo: aVertex ])
+	^ self class withValidVertices: (self vertices copyWithout: aVertex) andEdges: (self edges reject: [ :edge | edge isIncidentTo: aVertex ])
+]
+
+{ #category : #converting }
+Graph >> withoutVertices: aVertexCollection [
+
+	"Returns a new graph excluding the vertices and all it's incident edges"
+
+	^ self class withValidVertices: (self vertices copyWithoutAll: aVertexCollection) andEdges: (self edges reject: [ :edge | aVertexCollection anySatisfy: [ :vertex | edge isIncidentTo: vertex ] ])
 ]

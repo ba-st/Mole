@@ -11,8 +11,14 @@ Class {
 	#category : #Mole
 }
 
+{ #category : #'private - testing' }
+UndirectedGraph class >> isCompatible: anEdge [
+
+	^ anEdge isDirected not
+]
+
 { #category : #'Instance creation' }
-UndirectedGraph class >> withVertices: aVertexCollection andEdges: anEdgeCollection [
+UndirectedGraph class >> withValidVertices: aVertexCollection andEdges: anEdgeCollection [
 
 	^ self new initializeWithVertices: aVertexCollection asSet andEdges: anEdgeCollection asSet
 ]
@@ -20,15 +26,29 @@ UndirectedGraph class >> withVertices: aVertexCollection andEdges: anEdgeCollect
 { #category : #accessing }
 UndirectedGraph >> degreeOf: aVertex [
 
-	"The degree (or valency) of a vertex is the number of edges incident to the vertex"
+	"The degree (or valency) of a vertex is the number of edges incident to the vertex.
+	A special case is a loop, which adds two to the degree."
 
-	^ edges count: [ :edge | edge isIncidentTo: aVertex ]
+	^ edges
+		inject: 0
+		into: [ :sum :edge | 
+			(edge isIncidentTo: aVertex)
+				ifTrue: [ edge isSelfLoop
+						ifTrue: [ sum + 2 ]
+						ifFalse: [ sum + 1 ] ]
+				ifFalse: [ sum ] ]
 ]
 
 { #category : #'private - accessing' }
 UndirectedGraph >> edges [
 
 	^ edges
+]
+
+{ #category : #accessing }
+UndirectedGraph >> edgesIncidentTo: aVertex [
+
+	^ edges select: [ :undirectedEdge | undirectedEdge isIncidentTo: aVertex ]
 ]
 
 { #category : #initialization }

@@ -16,6 +16,18 @@ UndirectedEdge class >> relating: aVertexCollection [
 	^ self new intializeRelating: aVertexCollection asSet
 ]
 
+{ #category : #comparing }
+UndirectedEdge >> = anObject [
+
+	^ self class = anObject class and: [ relatedVertices = anObject relatedVertices ]
+]
+
+{ #category : #comparing }
+UndirectedEdge >> hash [
+
+	^ relatedVertices hash
+]
+
 { #category : #initialization }
 UndirectedEdge >> intializeRelating: aVertexCollection [
 
@@ -32,6 +44,18 @@ UndirectedEdge >> isDirected [
 UndirectedEdge >> isIncidentTo: aVertex [
 
 	^ relatedVertices includes: aVertex
+]
+
+{ #category : #printing }
+UndirectedEdge >> printOn: aStream [
+
+	aStream nextPut: ${.
+	relatedVertices
+		do: [ :vertex | aStream print: vertex ]
+		separatedBy: [ aStream
+				nextPut: $,;
+				space ].
+	aStream nextPut: $}
 ]
 
 { #category : #private }

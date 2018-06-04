@@ -14,6 +14,12 @@ GraphTest class >> isAbstract [
 ]
 
 { #category : #private }
+GraphTest >> edgeOfInvalidType [
+
+	^ self subclassResponsibility
+]
+
+{ #category : #private }
 GraphTest >> edgelessGraphWith: vertices [
 
 	^ self graphBuilder
@@ -35,6 +41,40 @@ GraphTest >> graphWithFiveVerticesAndTwoEdges [
 	^ self subclassResponsibility
 ]
 
+{ #category : #private }
+GraphTest >> invalidEdge [
+
+	^ self subclassResponsibility
+]
+
+{ #category : #'tests - instance creation' }
+GraphTest >> testCreateGraphWithInvalidEdge [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self validEdge with: self invalidEdge.
+
+	self
+		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge has endpoints not included in the vertices.' ]
+]
+
+{ #category : #'tests - instance creation' }
+GraphTest >> testCreateGraphWithInvalidEdgeType [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self edgeOfInvalidType.
+
+	self
+		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
+]
+
 { #category : #'tests - testing' }
 GraphTest >> testIncludesVertex [
 
@@ -46,6 +86,21 @@ GraphTest >> testIncludesVertex [
 	vertices do: [ :vertex | self assert: (graph includesVertex: vertex) ].
 
 	self deny: (graph includesVertex: 5)
+]
+
+{ #category : #'tests - converting' }
+GraphTest >> testIsAdjacentTo [
+
+	| graph |
+
+	graph := self graphWithFiveVerticesAndTwoEdges.
+
+	self
+		deny: (graph is: 1 adjacentTo: 1);
+		deny: (graph is: 1 adjacentTo: 2);
+		assert: (graph is: 2 adjacentTo: 3);
+		assert: (graph is: 3 adjacentTo: 2);
+		assert: (graph is: 3 adjacentTo: 4)
 ]
 
 { #category : #'tests - converting' }
@@ -106,4 +161,28 @@ GraphTest >> testWithoutVertex [
 	self
 		assert: newGraph order equals: 4;
 		assert: newGraph size equals: 2
+]
+
+{ #category : #'tests - converting' }
+GraphTest >> testWithoutVertices [
+
+	| graph newGraph |
+
+	graph := self graphWithFiveVerticesAndTwoEdges.
+
+	newGraph := graph withoutVertices: #(3 5).
+	self
+		assert: newGraph order equals: 3;
+		assert: newGraph size equals: 0.
+
+	newGraph := graph withoutVertices: #(2 1 5).
+	self
+		assert: newGraph order equals: 2;
+		assert: newGraph size equals: 1
+]
+
+{ #category : #private }
+GraphTest >> validEdge [
+
+	^ self subclassResponsibility
 ]
