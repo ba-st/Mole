@@ -21,7 +21,7 @@ DirectedEdgeTest >> testComparing [
 	self
 		assert: (DirectedEdge from: 1 to: 2) equals: (DirectedEdge from: 1 to: 2);
 		assert: (DirectedEdge from: 1 to: 2) hash equals: (DirectedEdge from: 1 to: 2) hash;
-		deny: (DirectedEdge from: 1 to: 2) equals: (DirectedEdge from: 2 to: 1)
+		deny: (DirectedEdge from: 1 to: 2) = (DirectedEdge from: 2 to: 1)
 ]
 
 { #category : #tests }
