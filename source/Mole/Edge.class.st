@@ -1,88 +1,41 @@
+"
+I'm an edge, one of the two basic units out of which graphs are constructed. 
+Each edge has two vertices to which it is attached, called its endpoints. 
+Edges may be directed or undirected; undirected edges are also called lines and directed edges are also called arcs or arrows. 
+In an undirected simple graph, an edge may be represented as the set of its vertices, and in a directed simple graph it may be represented as an ordered pair of its vertices.
+"
 Class {
 	#name : #Edge,
-	#superclass : #EdgeInterface,
-	#instVars : [
-		'source',
-		'target'
-	],
+	#superclass : #Object,
 	#category : #Mole
 }
 
-{ #category : #'instance creation' }
-Edge class >> from: from to: to [ 
-	
-	^self new initializeWithFrom: from to: to
-]
+{ #category : #testing }
+Edge >> isDirected [
 
-{ #category : #comparing }
-Edge >> = anotherEdge [
-
-	^self class = anotherEdge class 
-		ifTrue: [ source = anotherEdge source and: [ target = anotherEdge target ]]
-		ifFalse: [ false ]
+	^ self subclassResponsibility
 ]
 
 { #category : #testing }
-Edge >> convergesTo: anObject [
+Edge >> isIncidentTo: aVertex [
 
-	^target = anObject
+	^ self subclassResponsibility
 ]
 
 { #category : #testing }
-Edge >> convergesToSelf [
-	
-	^source = target
+Edge >> isSelfLoop [
+
+	^ self relatedVertices size = 1
 ]
 
-{ #category : #testing }
-Edge >> goesFrom: aSource to: aTarget [
+{ #category : #private }
+Edge >> relatedVertices [
 
-	^source = aSource and: [ target = aTarget ]
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
-Edge >> hash [
+Edge >> vertexRelatedTo: aVertex [
 
-	^source hash bitXor: target hash
-]
-
-{ #category : #initialization }
-Edge >> initializeWithFrom: from to: to [ 
-
-	source := from.
-	target := to
-]
-
-{ #category : #testing }
-Edge >> isIncidentTo: anObject [
-
-	^source = anObject or: [target = anObject]
-
-
-]
-
-{ #category : #printing }
-Edge >> printOn: aStream [
-
-	source printOn: aStream.
-	aStream nextPutAll: ' -> '.
-	target printOn: aStream
-]
-
-{ #category : #accessing }
-Edge >> source [
-
-	^source
-]
-
-{ #category : #testing }
-Edge >> startsOn: anObject [
-
-	^source = anObject
-]
-
-{ #category : #accessing }
-Edge >> target [
-
-	^target
+	^ self relatedVertices detect: [ :vertex | vertex ~= aVertex ]
 ]

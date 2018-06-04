@@ -1,491 +1,188 @@
+"
+I'm an abstract test case for Graph behavior
+"
 Class {
 	#name : #GraphTest,
 	#superclass : #TestCase,
 	#category : #'Mole-Tests'
 }
 
-{ #category : #test }
-GraphTest >> testAccessImmutability [
+{ #category : #testing }
+GraphTest class >> isAbstract [
 
-	| graph edges edgesPreviousAdd nodesPreviousAdd |
-
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		add: (Edge from: 3 to: 4);
-		add: (Edge from: 1 to: 4);
-		add: (Edge from: 4 to: 4);
-		yourself.
-	
-	graph := Graph edges: edges.		
-
-	edgesPreviousAdd := graph edges.
-	nodesPreviousAdd := graph nodes.
-
-	edges := graph edges.
-	edges add: (Edge from: 4 to: 5).
-
-	self assert: ((edges copy removeAll: graph edges; yourself) includes: (Edge from: 4 to: 5)).
-	self assert: (edgesPreviousAdd copy removeAll: graph edges; yourself) isEmpty.	
-	self assert: (graph edges removeAll: edgesPreviousAdd; yourself) isEmpty.	
-	
-	self assert: (nodesPreviousAdd copy removeAll: graph nodes; yourself) isEmpty.	
-	self assert: (graph nodes removeAll:  nodesPreviousAdd; yourself) isEmpty
-
+	^ self name = #GraphTest
 ]
 
-{ #category : #test }
-GraphTest >> testApplyUsingDepthFistSearch [
+{ #category : #private }
+GraphTest >> edgeOfInvalidType [
 
-	| collectedNodes expectedCollectedNodes graph |
-
-	collectedNodes := OrderedCollection new.
-
-	graph :=
-		Graph edges: (
-			OrderedCollection new
-				add: (Edge from: 1 to: 2);
-				add: (Edge from: 2 to: 3);
-				add: (Edge from: 3 to: 4);
-				add: (Edge from: 4 to: 5);
-				add: (Edge from: 1 to: 6);
-				add: (Edge from: 1 to: 7);
-				yourself).
-
-	graph apply: [:node | collectedNodes add: node] usingDepthFirstSearchFrom: 1.
-
-	expectedCollectedNodes := #(1 2 3 4 5 6 7).
-
-	self assert: collectedNodes asOrderedCollection = expectedCollectedNodes asOrderedCollection
+	^ self subclassResponsibility
 ]
 
-{ #category : #test }
-GraphTest >> testConvergingEdges [
+{ #category : #private }
+GraphTest >> edgelessGraphWith: vertices [
 
-	| graph edges |
-	
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		add: (Edge from: 3 to: 4);
-		add: (Edge from: 1 to: 4);
-		add: (Edge from: 4 to: 4);
-		yourself.
-	
-	graph := Graph edges: edges.
-	
-	self assert: (graph edgesConvergingTo: 1) isEmpty.
-	self assert: (graph edgesConvergingTo: 2) size = 1.
-	self assert: ((graph edgesConvergingTo: 2) copyWithout: (Edge from: 1 to: 2)) isEmpty.
-	
-	self assert: (graph edgesConvergingTo: 3) size = 1.
-	self assert: ((graph edgesConvergingTo: 3) copyWithout: (Edge from: 2 to: 3)) isEmpty.
-
-	self assert: (graph edgesConvergingTo: 4) size = 3.
-	self assert: ((graph edgesConvergingTo: 4) removeAll: (OrderedCollection 
-		with: (Edge from: 3 to: 4)
-		with: (Edge from: 4 to: 4)
-		with: (Edge from: 1 to: 4)); yourself) isEmpty.
-	
-	self assert: (graph edgesConvergingTo: 5) isEmpty
+	^ self graphBuilder
+		addVertices: vertices;
+		build
 ]
 
-{ #category : #test }
+{ #category : #private }
+GraphTest >> graphBuilder [
+
+	^ self subclassResponsibility
+]
+
+{ #category : #private }
+GraphTest >> graphWithFiveVerticesAndTwoEdges [
+
+	"G(V,E) / V = {1 2 3 4 5} E = { <2,3> <4,3> }"
+
+	^ self subclassResponsibility
+]
+
+{ #category : #private }
+GraphTest >> invalidEdge [
+
+	^ self subclassResponsibility
+]
+
+{ #category : #'tests - instance creation' }
 GraphTest >> testCreateGraphWithInvalidEdge [
 
-	| nodes invalidEdge edges |
+	| vertices edges |
 
-	nodes := Set with: 'a' with: 'b' with: 'c'.
-	invalidEdge := Edge from: 'c' to: 'd'.
-	edges := Set with: (Edge from: 'a' to: 'b') with: invalidEdge.
-
-	self
-		should: [Graph edges: edges nodes: nodes]
-		raise: EdgeEndpointNotIncludedInNodesException
-		withExceptionDo: [ :anException |
-			self
-				assert: anException description notEmpty;
-				assert: anException invalidEdge = invalidEdge;
-				assert: anException edges = edges;
-				assert: anException nodes = nodes]
-]
-
-{ #category : #test }
-GraphTest >> testCreateGraphWithUnconnectedNodes [
-
-	| nodes graph edge |
-
-	nodes := Set with: 'a' with: 'b' with: 'c'.
-	edge := Edge from: 'a' to: 'b'.
-
-	graph := Graph edges: (Set with: edge) nodes: nodes.
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self validEdge with: self invalidEdge.
 
 	self
-		assert: graph nodes size = nodes size;
-		assert: (graph nodes includesAllOf: nodes);
-		assert: (graph edges allSatisfy: [:each | each = edge]);
-		assert: (graph nodesWithoutConvergingEdges includes: 'a');
-		assert: (graph nodesWithoutConvergingEdges includes: 'c');
-		assert: (graph nodesWithoutStartingEdges includes: 'c')
+		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge has endpoints not included in the vertices.' ]
 ]
 
-{ #category : #test }
-GraphTest >> testCreateGraphWithoutEdges [
+{ #category : #'tests - instance creation' }
+GraphTest >> testCreateGraphWithInvalidEdgeType [
 
-	| nodes graph |
+	| vertices edges |
 
-	nodes := (Set with: 'a' with: 'b' with: 'c').
-	graph := Graph edges: #() nodes: nodes.
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self edgeOfInvalidType.
 
 	self
-		assert: graph nodes size = 3;
-		assert: (graph nodes includesAllOf: nodes);
-		assert: graph nodesWithoutStartingEdges size = nodes size;
-		assert: graph nodesWithoutConvergingEdges size = nodes size;
-		assert: (graph nodesWithoutStartingEdges includesAllOf: nodes);
-		assert: (graph nodesWithoutConvergingEdges includesAllOf: nodes)
+		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
 ]
 
-{ #category : #test }
-GraphTest >> testCreationImmutability [
+{ #category : #'tests - testing' }
+GraphTest >> testIncludesVertex [
 
-	| graph edges |
+	| vertices graph |
 
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		add: (Edge from: 3 to: 4);
-		add: (Edge from: 1 to: 4);
-		add: (Edge from: 4 to: 4);
-		yourself.
-	
-	graph := Graph edges: edges.		
+	vertices := #(1 2 3 4).
+	graph := self edgelessGraphWith: vertices.
 
-	"Verify if modifying the entrance collection the graph follows immutable"
-	edges add: (Edge from: 4 to: 5).
-	self assert: graph edges size = 5.
-	self deny: (graph edges includes: (Edge from: 4 to: 5))
+	vertices do: [ :vertex | self assert: (graph includesVertex: vertex) ].
+
+	self deny: (graph includesVertex: 5)
 ]
 
-{ #category : #test }
-GraphTest >> testEdgesConvergingToSelf [
-
-	| graph edges |
-	
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		add: (Edge from: 3 to: 4);
-		add: (Edge from: 1 to: 4);
-		add: (Edge from: 4 to: 4);
-		yourself.
-	
-	graph := Graph edges: edges.	
-	self assert: (graph edgesConvergingToSelf) size = 1.
-	self assert: ((graph edgesConvergingToSelf) copyWithout: (Edge from: 4 to:4)) isEmpty
-]
-
-{ #category : #test }
-GraphTest >> testEqual [
-
-	| graph1 graph2 |
-	
-	graph1 := Graph edges: (Array 
-		with: (Edge from: 1 to: 2)
-		with: (Edge from: 2 to: 3) ).
-		
-	graph2 := Graph edges: (Array 
-		with: (Edge from: 2 to: 3) 
-		with: (Edge from: 1 to: 2) ).
-	
-	self assert: graph1 = graph2
-]
-
-{ #category : #test }
-GraphTest >> testEqualsDifferentGraphs [
-
-	| graph1 graph2 |
-
-	graph1 := Graph edges: (Array with: (Edge from: 1 to: 2) with: (Edge from: 4 to: 5)).
-	graph2 := Graph edges: (Array with: (Edge from: 2 to: 3) with: (Edge from: 1 to: 2)).
-
-	self deny: graph1 = graph2
-]
-
-{ #category : #test }
-GraphTest >> testGraphCreation [
-
-	| graph edges |
-
-	edges :=
-		OrderedCollection new
-			add: (Edge from: 1 to: 2);
-			add: (Edge from: 2 to: 3);
-			yourself.
-
-	graph := Graph edges: edges.
-
-	self assert: graph edges size = 2.
-	self assert: (graph edges includes: (Edge from: 1 to: 2)).
-	self assert: (graph edges includes: (Edge from: 2 to: 3)).
-
-	self assert: (graph nodes size = 3).
-	self assert: (graph nodes includes: 1).
-	self assert: (graph nodes includes: 2).
-	self assert: (graph nodes includes: 3)
-]
-
-{ #category : #test }
-GraphTest >> testHash [
-
-	| graph1 graph2 |
-	
-	graph1 := Graph edges: (Array 
-		with: (Edge from: 1 to: 2)
-		with: (Edge from: 2 to: 3) ).
-		
-	graph2 := Graph edges: (Array 
-		with: (Edge from: 2 to: 3) 
-		with: (Edge from: 1 to: 2) ).
-	
-	self assert: graph1 hash = graph2 hash
-]
-
-{ #category : #test }
-GraphTest >> testIncludesNode [
-
-	| graph edges |
-	
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		yourself.
-	
-	graph := Graph edges: edges.
-	
-	self assert: (graph includesNode: 1).
-	self assert: (graph includesNode: 2).
-	self assert: (graph includesNode: 3).
-	self deny: (graph includesNode: 4)
-]
-
-{ #category : #test }
-GraphTest >> testIsAcyclicWhenGraphIsAcyclic [
-
-	| acyclicGraph |
-
-	acyclicGraph :=
-		Graph edges: (Array with: (Edge from: 'a' to: 'b') with: (Edge from: 'b' to: 'c')).
-
-
-	self assert: acyclicGraph isAcyclic
-]
-
-{ #category : #test }
-GraphTest >> testIsAcyclicWhenGraphIsCyclic [
-
-	| cyclicGraph |
-
-	cyclicGraph :=
-		Graph edges: (
-			Array
-				with: (Edge from: 'a' to: 'b')
-				with: (Edge from: 'b' to: 'c')
-				with: (Edge from: 'c' to: 'a')).
-
-	self deny: cyclicGraph isAcyclic.
-
-	cyclicGraph :=
-		Graph edges: (
-			Array
-				with: (Edge from: 'a' to: 'b')
-				with: (Edge from: 'b' to: 'c')
-				with: (Edge from: 'c' to: 'b')).
-
-	self deny: cyclicGraph isAcyclic
-]
-
-{ #category : #test }
-GraphTest >> testIsEmpty [
+{ #category : #'tests - converting' }
+GraphTest >> testIsAdjacentTo [
 
 	| graph |
 
-	graph := Graph edges: #() nodes: #().
+	graph := self graphWithFiveVerticesAndTwoEdges.
 
-	self assert: graph isEmpty
+	self
+		deny: (graph is: 1 adjacentTo: 1);
+		deny: (graph is: 1 adjacentTo: 2);
+		assert: (graph is: 2 adjacentTo: 3);
+		assert: (graph is: 3 adjacentTo: 2);
+		assert: (graph is: 3 adjacentTo: 4)
 ]
 
-{ #category : #test }
-GraphTest >> testNodesAdjacentTo [
-
-	| graph adjacentNodes |
-
-	graph :=
-		Graph edges: (
-			OrderedCollection new
-				add: (Edge from: 1 to: 2);
-				add: (Edge from: 2 to: 3);
-				add: (Edge from: 4 to: 5);
-				add: (Edge from: 1 to: 6);
-				add: (Edge from: 1 to: 7);
-				yourself).
-
-	adjacentNodes := #(2 6 7).
-
-	self assert: (graph nodesAdjacentTo: 1) asOrderedCollection = adjacentNodes asOrderedCollection
-]
-
-{ #category : #test }
-GraphTest >> testNodesWithoutEdges [
-
-	| graph edges |
-
-	edges :=
-		OrderedCollection new
-			add: (Edge from: 1 to: 2);
-			add: (Edge from: 2 to: 3);
-			yourself.
-
-	graph := Graph edges: edges.
-
-	self assert: (graph nodesWithoutStartingEdges size = 1).
-	self assert: (graph nodesWithoutStartingEdges includes: 3).
-	self assert: (graph nodesWithoutConvergingEdges size = 1).
-	self assert: (graph nodesWithoutConvergingEdges includes: 1)
-]
-
-{ #category : #test }
-GraphTest >> testNotEmpty [
+{ #category : #'tests - converting' }
+GraphTest >> testNeighborsOf [
 
 	| graph |
 
-	graph := Graph edges: #() nodes: (Set with: 'a').
+	graph := self graphWithFiveVerticesAndTwoEdges.
 
 	self
-		assert: graph notEmpty;
-		deny: graph isEmpty.
+		assert: (graph neighborsOf: 1) isEmpty;
+		assertCollection: (graph neighborsOf: 2) equals: #(3) asSet;
+		assertCollection: (graph neighborsOf: 3) equals: #(2 4) asSet;
+		assertCollection: (graph neighborsOf: 4) equals: #(3) asSet;
+		assert: (graph neighborsOf: 5) isEmpty
+]
 
-	graph := Graph edges: (Array with: (Edge from: 'a' to: 'b')).
+{ #category : #'tests - accessing' }
+GraphTest >> testOrder [
 
 	self
-		assert: graph notEmpty;
-		deny: graph isEmpty
+		assert: (self edgelessGraphWith: #()) order equals: 0;
+		assert: (self edgelessGraphWith: #(1 2 3 4)) order equals: 4;
+		assert: self graphWithFiveVerticesAndTwoEdges order equals: 5
 ]
 
-{ #category : #test }
-GraphTest >> testRemoveNode [
-
-	| nodes nodeToRemove edge edgeToRemove edges graph modifiedGraph |
-
-	nodeToRemove := 'c'.
-	nodes := Set with: 'a' with: 'b' with: nodeToRemove.
-	edge := Edge from: 'a' to: 'b'.
-	edgeToRemove := Edge from: 'b' to: nodeToRemove.
-
-	edges := Set with: edge with: edgeToRemove.
-	graph := Graph edges: edges nodes: nodes.
-
-	modifiedGraph := graph removeNode: nodeToRemove.
+{ #category : #'tests - accessing' }
+GraphTest >> testSize [
 
 	self
-		assert: graph = (Graph edges: edges nodes: nodes)
-			description: 'El grafo el inmutable, eliminar un nodo crea otro grafo';
-		assert: modifiedGraph edges size = (edges size - 1);
-		deny: (modifiedGraph edges includes: (edgeToRemove));
-		assert: (modifiedGraph edges includes: edge);
-		deny: (modifiedGraph nodes includes: nodeToRemove);
-		assert: (modifiedGraph nodes includes: 'a');
-		assert: (modifiedGraph nodes includes: 'b')
+		assert: (self edgelessGraphWith: #()) size equals: 0;
+		assert: (self edgelessGraphWith: #(1 2 3 4)) size equals: 0;
+		assert: self graphWithFiveVerticesAndTwoEdges size equals: 2
 ]
 
-{ #category : #test }
-GraphTest >> testRemoveNodeWithInvalidNode [
+{ #category : #'tests - converting' }
+GraphTest >> testWithoutVertex [
 
-	| graph |
+	| graph newGraph |
 
-	graph := Graph edges: (Array with: (Edge from: 'a' to: 'b')).
+	graph := self graphWithFiveVerticesAndTwoEdges.
 
 	self
-		should: [graph removeNode: 'd']
-		raise: NodeNotFoundException
-		withExceptionDo: [ :anException |
-			self
-				assert: anException description notEmpty;
-				assert: anException node = 'd';
-				assert: anException graph = graph]
-]
+		assert: graph order equals: 5;
+		assert: graph size equals: 2.
 
-{ #category : #test }
-GraphTest >> testRemoveNodes [
-
-	| nodes nodeToRemove edge edgeToRemove edges graph modifiedGraph anotherNodeToRemove
-	  anotherEdgeToRemove |
-
-	nodeToRemove := 'c'.
-	anotherNodeToRemove := 'd'.
-	nodes := Set with: 'a' with: 'b' with: nodeToRemove with: anotherNodeToRemove.
-	edge := Edge from: 'a' to: 'b'.
-	edgeToRemove := Edge from: 'b' to: nodeToRemove.
-	anotherEdgeToRemove := Edge from: 'a' to: anotherNodeToRemove.
-
-	edges := Set with: edge with: edgeToRemove with: anotherEdgeToRemove.
-	graph := Graph edges: edges nodes: nodes.
-
-	modifiedGraph := graph removeNodes: (Array with: nodeToRemove with: anotherNodeToRemove).
-
+	newGraph := graph withoutVertex: 3.
 	self
-		assert: graph = (Graph edges: edges nodes: nodes)
-			description: 'The graph is immutable, to eliminate a node creates another graph';
-		assert: modifiedGraph edges size = (edges size - 2);
-		deny: (modifiedGraph edges includes: edgeToRemove);
-		deny: (modifiedGraph edges includes: anotherEdgeToRemove);
-		assert: (modifiedGraph edges includes: edge);
-		deny: (modifiedGraph nodes includes: nodeToRemove);
-		deny: (modifiedGraph nodes includes: anotherNodeToRemove);
-		assert: (modifiedGraph nodes includes: 'a');
-		assert: (modifiedGraph nodes includes: 'b')
+		assert: newGraph order equals: 4;
+		assert: newGraph size equals: 0.
+
+	newGraph := graph withoutVertex: 2.
+	self
+		assert: newGraph order equals: 4;
+		assert: newGraph size equals: 1.
+
+	newGraph := graph withoutVertex: 1.
+	self
+		assert: newGraph order equals: 4;
+		assert: newGraph size equals: 2
 ]
 
-{ #category : #test }
-GraphTest >> testSameNodesAs [
+{ #category : #'tests - converting' }
+GraphTest >> testWithoutVertices [
 
-	| graph anotherGraph nodes |
+	| graph newGraph |
 
-	nodes := Set with: 'a' with: 'b'.
-	graph := Graph edges: #() nodes: nodes.
-	anotherGraph := Graph edges: #() nodes: nodes.
+	graph := self graphWithFiveVerticesAndTwoEdges.
 
-	self assert: (graph sameNodesAs: anotherGraph)
+	newGraph := graph withoutVertices: #(3 5).
+	self
+		assert: newGraph order equals: 3;
+		assert: newGraph size equals: 0.
+
+	newGraph := graph withoutVertices: #(2 1 5).
+	self
+		assert: newGraph order equals: 2;
+		assert: newGraph size equals: 1
 ]
 
-{ #category : #test }
-GraphTest >> testStartingEdges [
+{ #category : #private }
+GraphTest >> validEdge [
 
-	| graph edges |
-	
-	edges := OrderedCollection new
-		add: (Edge from: 1 to: 2);
-		add: (Edge from: 2 to: 3);
-		add: (Edge from: 3 to: 4);
-		add: (Edge from: 1 to: 4);
-		add: (Edge from: 4 to: 4);
-		yourself.
-	
-	graph := Graph edges: edges.	
-	
-	self assert: (graph edgesStartingOn: 1) size = 2.
-	self assert: ((graph edgesStartingOn: 1) removeAll: (OrderedCollection 
-		with: (Edge from: 1 to: 2)
-		with: (Edge from: 1 to: 4)); yourself ) isEmpty.
-		
-	self assert: (graph edgesStartingOn: 2) size = 1.
-	self assert: ((graph edgesStartingOn: 2) copyWithout: (Edge from: 2 to: 3)) isEmpty.
-	
-	self assert: (graph edgesStartingOn: 3) size = 1.
-	self assert: ((graph edgesStartingOn: 3) copyWithout: (Edge from: 3 to: 4)) isEmpty.
-
-	self assert: (graph edgesStartingOn: 4) size = 1.
-	self assert: ((graph edgesStartingOn: 4) copyWithout: (Edge from: 4 to: 4)) isEmpty.
-	
-	self assert: (graph edgesStartingOn: 5) isEmpty
+	^ self subclassResponsibility
 ]
