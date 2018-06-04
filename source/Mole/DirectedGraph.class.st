@@ -106,6 +106,29 @@ DirectedGraph >> vertices [
 	^ vertices
 ]
 
+{ #category : #accessing }
+DirectedGraph >> verticesReachableFrom: aSourceVertex [
+
+	| reachableVertices |
+
+	reachableVertices := Set new.
+	self verticesReachableFrom: aSourceVertex collectedOn: reachableVertices.
+	^ reachableVertices
+]
+
+{ #category : #'private - accessing' }
+DirectedGraph >> verticesReachableFrom: aSourceVertex collectedOn: reachableVertices [
+
+	| successors successorsNotVisited |
+
+	successors := (self edgesOutgoingFrom: aSourceVertex) collect: [ :directedEdge | directedEdge target ].
+	successorsNotVisited := successors reject: [ :vertex | reachableVertices includes: vertex ].
+
+	reachableVertices addAll: successors.
+
+	successorsNotVisited do: [ :successor | self verticesReachableFrom: successor collectedOn: reachableVertices ]
+]
+
 { #category : #'private - accessing' }
 DirectedGraph >> verticesWithoutIncomingEdges [
 

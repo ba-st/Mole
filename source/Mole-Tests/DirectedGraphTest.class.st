@@ -235,6 +235,32 @@ DirectedGraphTest >> testTopologicalSortWithoutEdges [
 	self assert: (expectedResults includes: graph topologicalSort)
 ]
 
+{ #category : #'tests - accessing' }
+DirectedGraphTest >> testVerticesReachableFrom [
+
+	| graph vertices |
+
+	graph := self graphBuilder
+		connect: 1 to: 2;
+		connect: 1 to: 1;
+		connect: 4 to: 4;
+		build.
+
+	vertices := graph verticesReachableFrom: 1.
+	self
+		assert: vertices size equals: 2;
+		assert: (vertices includes: 2);
+		assert: (vertices includes: 1).
+
+	vertices := graph verticesReachableFrom: 4.
+	self
+		assert: vertices size equals: 1;
+		assert: (vertices includes: 4).
+
+	vertices := graph verticesReachableFrom: 2.
+	self assert: vertices isEmpty
+]
+
 { #category : #private }
 DirectedGraphTest >> validEdge [
 
