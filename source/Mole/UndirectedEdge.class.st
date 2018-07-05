@@ -31,6 +31,11 @@ UndirectedEdge >> hash [
 { #category : #initialization }
 UndirectedEdge >> intializeRelating: aVertexCollection [
 
+	AssertionChecker
+		enforce: [ aVertexCollection size between: 1 and: 2 ]
+		because: 'Undirected edges can only be self-loops or connect exactly 2 vertices'
+		raising: InstanceCreationFailed.
+		
 	relatedVertices := aVertexCollection
 ]
 
