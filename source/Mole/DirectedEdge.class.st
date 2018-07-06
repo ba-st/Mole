@@ -44,6 +44,12 @@ DirectedEdge >> convergesTo: anObject [
 	^target = anObject
 ]
 
+{ #category : #private }
+DirectedEdge >> endpoints [
+
+	^ {source. target} asBag
+]
+
 { #category : #testing }
 DirectedEdge >> goesFrom: aSourceVertex to: aTargetVertex [
 
@@ -90,12 +96,6 @@ DirectedEdge >> printOn: aStream [
 	source printOn: aStream.
 	aStream nextPutAll: ' -> '.
 	target printOn: aStream
-]
-
-{ #category : #private }
-DirectedEdge >> relatedVertices [
-
-	^ {source. target} asSet
 ]
 
 { #category : #accessing }

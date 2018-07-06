@@ -62,7 +62,7 @@ UndirectedEdgeTest >> testInvalidCreation [
 		withExceptionDo: [ :exception | 
 			self
 				assert: exception messageText
-				equals: 'Undirected edges can only be self-loops or connect exactly 2 vertices' ].
+				equals: 'Undirected edges must specify exactly 2 vertices' ].
 
 	self
 		should: [ UndirectedEdge relating: #(1 2 3) ]
@@ -70,7 +70,7 @@ UndirectedEdgeTest >> testInvalidCreation [
 		withExceptionDo: [ :exception | 
 			self
 				assert: exception messageText
-				equals: 'Undirected edges can only be self-loops or connect exactly 2 vertices' ]
+				equals: 'Undirected edges must specify exactly 2 vertices' ]
 ]
 
 { #category : #tests }
@@ -97,7 +97,7 @@ UndirectedEdgeTest >> testIsSelfLoop [
 
 	self deny: (UndirectedEdge relating: #(1 2)) isSelfLoop.
 
-	self assert: (UndirectedEdge relating: #(1)) isSelfLoop
+	self assert: (UndirectedEdge relating: #(1 1)) isSelfLoop
 ]
 
 { #category : #tests }
@@ -105,7 +105,7 @@ UndirectedEdgeTest >> testPrintOn [
 
 	self
 		assert: (#('{1, 2}' '{2, 1}') includes: (UndirectedEdge relating: #(1 2)) printString);
-		assert: (UndirectedEdge relating: #(1)) printString equals: '{1}'
+		assert: (UndirectedEdge relating: #(1 1)) printString equals: '{1, 1}'
 ]
 
 { #category : #tests }

@@ -14,7 +14,7 @@ Class {
 { #category : #'private - testing' }
 Graph class >> endpointsOf: edges areIncludedIn: vertices [
 
-	^ edges allSatisfy: [ :edge | vertices includesAll: edge relatedVertices ]
+	^ edges allSatisfy: [ :edge | vertices includesAll: edge endpoints ]
 ]
 
 { #category : #'private - testing' }
@@ -53,6 +53,12 @@ Graph >> edges [
 	^ self subclassResponsibility
 ]
 
+{ #category : #accessing }
+Graph >> edgesIncidentTo: aVertex [
+
+	^ self edges select: [ :edge | edge isIncidentTo: aVertex ]
+]
+
 { #category : #testing }
 Graph >> includesVertex: aVertex [
 
@@ -62,7 +68,8 @@ Graph >> includesVertex: aVertex [
 { #category : #testing }
 Graph >> is: aVertex adjacentTo: anotherVertex [
 
-	^ self edges anySatisfy: [ :edge | (edge isIncidentTo: aVertex) and: [ edge isIncidentTo: anotherVertex ] ]
+	^ self edges
+		anySatisfy: [ :edge | (edge isIncidentTo: aVertex) and: [ edge isIncidentTo: anotherVertex ] ]
 ]
 
 { #category : #accessing }

@@ -14,23 +14,32 @@ GraphTest class >> isAbstract [
 ]
 
 { #category : #private }
-GraphTest >> edgeOfInvalidType [
+GraphTest >> assertEdgesIncidentTo: aVertex in: aGraph match: aDictionary [
 
-	^ self subclassResponsibility
+	| labelByEdge edges |
+
+	labelByEdge := Dictionary new.
+	edges := aGraph edgesIncidentTo: aVertex.
+	edges
+		do: [ :edge | 
+			edge
+				withLabelDo: [ :label | labelByEdge at: edge asString put: label ]
+				ifUnlabeled: [ self fail ] ].
+	self assertCollection: labelByEdge keys hasSameElements: aDictionary keys.
+	aDictionary
+		keysAndValuesDo: [ :edgeString :weight | self assert: (labelByEdge at: edgeString) equals: weight ]
 ]
 
 { #category : #private }
 GraphTest >> edgelessGraphWith: vertices [
 
-	^ self graphBuilder
-		addVertices: vertices;
-		build
+	self subclassResponsibility
 ]
 
 { #category : #private }
 GraphTest >> graphBuilder [
 
-	^ self subclassResponsibility
+	^ GraphBuilder new
 ]
 
 { #category : #private }
@@ -38,41 +47,21 @@ GraphTest >> graphWithFiveVerticesAndTwoEdges [
 
 	"G(V,E) / V = {1 2 3 4 5} E = { <2,3> <4,3> }"
 
-	^ self subclassResponsibility
+	self subclassResponsibility
 ]
 
 { #category : #private }
-GraphTest >> invalidEdge [
+GraphTest >> graphWithSelfLoop [
 
-	^ self subclassResponsibility
+	"G(V,E) / V = {1 2 3} E = { <2,2> <3,4> <3,5> }"
+
+	self subclassResponsibility
 ]
 
-{ #category : #'tests - instance creation' }
-GraphTest >> testCreateGraphWithInvalidEdge [
+{ #category : #private }
+GraphTest >> labeledGraph [
 
-	| vertices edges |
-
-	vertices := #('a' 'b' 'c') asSet.
-	edges := Set with: self validEdge with: self invalidEdge.
-
-	self
-		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
-		raise: InstanceCreationFailed
-		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge has endpoints not included in the vertices.' ]
-]
-
-{ #category : #'tests - instance creation' }
-GraphTest >> testCreateGraphWithInvalidEdgeType [
-
-	| vertices edges |
-
-	vertices := #('a' 'b' 'c') asSet.
-	edges := Set with: self edgeOfInvalidType.
-
-	self
-		should: [ self graphBuilder graphClass withVertices: vertices andEdges: edges ]
-		raise: InstanceCreationFailed
-		withExceptionDo: [ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
+	self subclassResponsibility
 ]
 
 { #category : #'tests - testing' }
@@ -116,6 +105,21 @@ GraphTest >> testNeighborsOf [
 		assertCollection: (graph neighborsOf: 3) equals: #(2 4) asSet;
 		assertCollection: (graph neighborsOf: 4) equals: #(3) asSet;
 		assert: (graph neighborsOf: 5) isEmpty
+]
+
+{ #category : #'tests - converting' }
+GraphTest >> testNeighborsOfForVertexWithSelfLoop [
+
+	| graph |
+
+	graph := self graphWithSelfLoop.
+
+	self
+		assert: (graph neighborsOf: 1) isEmpty;
+		assertCollection: (graph neighborsOf: 2) equals: #(2) asSet;
+		assertCollection: (graph neighborsOf: 3) equals: #(4 5) asSet;
+		assertCollection: (graph neighborsOf: 4) equals: #(3) asSet;
+		assertCollection: (graph neighborsOf: 5) equals: #(3) asSet
 ]
 
 { #category : #'tests - accessing' }
@@ -179,10 +183,4 @@ GraphTest >> testWithoutVertices [
 	self
 		assert: newGraph order equals: 2;
 		assert: newGraph size equals: 1
-]
-
-{ #category : #private }
-GraphTest >> validEdge [
-
-	^ self subclassResponsibility
 ]

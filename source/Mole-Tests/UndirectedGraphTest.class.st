@@ -14,25 +14,79 @@ UndirectedGraphTest >> edgeOfInvalidType [
 ]
 
 { #category : #private }
-UndirectedGraphTest >> graphBuilder [
+UndirectedGraphTest >> edgelessGraphWith: vertices [
 
-	^ UndirectedGraphBuilder new
+	^ self graphBuilder
+		addVertices: vertices;
+		buildUndirected
 ]
 
 { #category : #private }
 UndirectedGraphTest >> graphWithFiveVerticesAndTwoEdges [
 
 	^ self graphBuilder
-		relate: 2 to: 3;
-		relate: 4 to: 3;
+		connect: 2 to: 3;
+		connect: 4 to: 3;
 		addVertices: #(1 5);
-		build
+		buildUndirected
+]
+
+{ #category : #private }
+UndirectedGraphTest >> graphWithSelfLoop [
+
+	^ self graphBuilder
+		loopOn: 2;
+		connect: 3 to: 4;
+		connect: 3 to: 5;
+		addVertices: #(1);
+		buildUndirected
 ]
 
 { #category : #private }
 UndirectedGraphTest >> invalidEdge [
 
 	^ UndirectedEdge relating: #('a' 'z')
+]
+
+{ #category : #private }
+UndirectedGraphTest >> labeledGraph [
+
+	^ self graphBuilder
+		connect: 1 to: 2 labeled: 'W12';
+		connect: 1 to: 3 labeled: 'W13';
+		buildUndirected
+]
+
+{ #category : #'tests - instance creation' }
+UndirectedGraphTest >> testCreateGraphWithInvalidEdge [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self validEdge with: self invalidEdge.
+
+	self
+		should: [ UndirectedGraph withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | 
+			self
+				assert: error messageText
+				equals: 'Some edge has endpoints not included in the vertices.' ]
+]
+
+{ #category : #'tests - instance creation' }
+UndirectedGraphTest >> testCreateGraphWithInvalidEdgeType [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self edgeOfInvalidType.
+
+	self
+		should: [ UndirectedGraph withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo:
+			[ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
 ]
 
 { #category : #'tests - accessing' }
@@ -55,8 +109,8 @@ UndirectedGraphTest >> testDegreeOf [
 		assert: (graph degreeOf: 4) equals: 1.
 
 	graph := self graphBuilder
-		relate: 1 to: 1;
-		build.
+		loopOn: 1;
+		buildUndirected.
 
 	self assert: (graph degreeOf: 1) equals: 2
 ]
@@ -67,13 +121,47 @@ UndirectedGraphTest >> testEdgesIncidentTo [
 	| graph edges |
 
 	graph := self graphBuilder
-		relate: 1 to: 2;
-		selfRelate: 1;
-		selfRelate: 4;
-		build.
+		connect: 1 to: 2;
+		loopOn: 1;
+		loopOn: 4;
+		buildUndirected.
 
 	edges := graph edgesIncidentTo: 1.
 	self assert: edges size equals: 2
+]
+
+{ #category : #'tests - instance creation' }
+UndirectedGraphTest >> testLabeledGraph [
+
+	| graph |
+
+	graph := self labeledGraph.
+
+	self
+		assertCollection: (graph neighborsOf: 1) hasSameElements: #(2 3);
+		assertCollection: (graph neighborsOf: 2) hasSameElements: #(1);
+		assertCollection: (graph neighborsOf: 3) hasSameElements: #(1).
+
+	self
+		assertEdgesIncidentTo: 1
+			in: graph
+			match:
+			(Dictionary new
+				at: '{1, 2}' put: 'W12';
+				at: '{1, 3}' put: 'W13';
+				yourself);
+		assertEdgesIncidentTo: 2
+			in: graph
+			match:
+			(Dictionary new
+				at: '{1, 2}' put: 'W12';
+				yourself);
+		assertEdgesIncidentTo: 3
+			in: graph
+			match:
+			(Dictionary new
+				at: '{1, 3}' put: 'W13';
+				yourself)
 ]
 
 { #category : #'tests - accessing' }
@@ -82,14 +170,15 @@ UndirectedGraphTest >> testSelfLoops [
 	| graph selfLoops |
 
 	graph := self graphBuilder
-		relate: 1 to: 2;
-		selfRelate: 1;
-		selfRelate: 4;
-		build.
+		connect: 1 to: 2;
+		loopOn: 1;
+		loopOn: 4;
+		buildUndirected.
 
 	selfLoops := graph selfLoops.
 	self assert: selfLoops size equals: 2.
-	selfLoops do: [ :selfLoop | self assert: ((selfLoop isIncidentTo: 1) or: [ selfLoop isIncidentTo: 4 ]) ]
+	selfLoops
+		do: [ :selfLoop | self assert: ((selfLoop isIncidentTo: 1) or: [ selfLoop isIncidentTo: 4 ]) ]
 ]
 
 { #category : #private }
