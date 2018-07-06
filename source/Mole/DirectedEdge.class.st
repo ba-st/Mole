@@ -6,21 +6,36 @@ Class {
 	#superclass : #Edge,
 	#instVars : [
 		'source',
-		'target'
+		'target',
+		'labelOptional'
 	],
 	#category : #Mole
 }
 
 { #category : #'instance creation' }
-DirectedEdge class >> from: from to: to [ 
-	
-	^self new initializeWithFrom: from to: to
+DirectedEdge class >> from: aSource to: aTarget [
+
+	^ self from: aSource to: aTarget labeledAccordingTo: Optional unused
+]
+
+{ #category : #'instance creation' }
+DirectedEdge class >> from: aSource to: aTarget labeled: aLabel [
+
+	^ self from: aSource to: aTarget labeledAccordingTo: (Optional containing: aLabel)
+]
+
+{ #category : #'private - instance creation' }
+DirectedEdge class >> from: aSource to: aTarget labeledAccordingTo: anOptional [
+
+	^ self new initializeWithFrom: aSource to: aTarget labeledAccordingTo: anOptional
 ]
 
 { #category : #comparing }
 DirectedEdge >> = anObject [
 
-	^ self class = anObject class and: [ anObject goesFrom: source to: target ]
+	^ self == anObject
+		or: [ (anObject isA: self class)
+				and: [ (anObject goesFrom: source to: target) and: [ self isLabeledLike: anObject ] ] ]
 ]
 
 { #category : #testing }
@@ -38,14 +53,21 @@ DirectedEdge >> goesFrom: aSourceVertex to: aTargetVertex [
 { #category : #comparing }
 DirectedEdge >> hash [
 
-	^source hash bitXor: target hash
+	| hashWithoutLabel |
+
+	"Not all instances of unused optional will return the same hash"
+	hashWithoutLabel := source hash bitXor: target hash.
+	^ self
+		withLabelDo: [ :label | hashWithoutLabel bitXor: label hash ]
+		ifUnlabeled: [ hashWithoutLabel ]
 ]
 
 { #category : #initialization }
-DirectedEdge >> initializeWithFrom: from to: to [ 
+DirectedEdge >> initializeWithFrom: aSource to: aTarget labeledAccordingTo: anOptional [
 
-	source := from.
-	target := to
+	source := aSource.
+	target := aTarget.
+	labelOptional := anOptional
 ]
 
 { #category : #testing }
@@ -58,6 +80,14 @@ DirectedEdge >> isDirected [
 DirectedEdge >> isIncidentTo: aVertex [
 
 	^ (self startsOn: aVertex) or: [ self convergesTo: aVertex ]
+]
+
+{ #category : #private }
+DirectedEdge >> isLabeledLike: anEdge [
+
+	^ self
+		withLabelDo: [ :label | anEdge withLabelDo: [ :edgeLabel | label = edgeLabel ] ifUnlabeled: [ false ] ]
+		ifUnlabeled: [ anEdge withLabelDo: [ false ] ifUnlabeled: [ true ] ]
 ]
 
 { #category : #printing }
@@ -90,4 +120,10 @@ DirectedEdge >> startsOn: anObject [
 DirectedEdge >> target [
 
 	^target
+]
+
+{ #category : #accessing }
+DirectedEdge >> withLabelDo: aBlock ifUnlabeled: anUnlabeledBlock [
+
+	^ labelOptional withContentDo: aBlock ifUnused: anUnlabeledBlock
 ]

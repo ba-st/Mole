@@ -33,18 +33,51 @@ DirectedEdgeTest >> testEquals [
 		assert: edge equals: equivalentEdge;
 		assert: equivalentEdge equals: edge;
 		deny: edge = differentEdge;
+		deny: differentEdge = edge.
+
+	edge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
+	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
+	differentEdge := DirectedEdge from: 1 to: 2 labeled: 'A different labeling object'.
+	self
+		assert: edge equals: edge;
+		assert: edge equals: equivalentEdge;
+		assert: equivalentEdge equals: edge;
+		deny: edge = differentEdge;
 		deny: differentEdge = edge
 ]
 
 { #category : #tests }
 DirectedEdgeTest >> testFromTo [
 
-	| edge |
+	| edge isUnlabeled |
 
 	edge := DirectedEdge from: 1 to: 2.
+	isUnlabeled := false.
 	self
 		assert: edge source equals: 1;
-		assert: edge target equals: 2
+		assert: edge target equals: 2.
+
+	edge withLabelDo: [ :label | self fail ] ifUnlabeled: [ isUnlabeled := true ].
+	self assert: isUnlabeled
+]
+
+{ #category : #tests }
+DirectedEdgeTest >> testFromToLabeled [
+
+	| edge |
+
+	edge := DirectedEdge
+		from: 1
+		to: 2
+		labeled: 'I could be a complext function, it''s not just for text'.
+	self
+		assert: edge source equals: 1;
+		assert: edge target equals: 2.
+
+	edge
+		withLabelDo:
+			[ :label | self assert: label equals: 'I could be a complext function, it''s not just for text' ]
+		ifUnlabeled: [ self fail ]
 ]
 
 { #category : #tests }
@@ -69,7 +102,13 @@ DirectedEdgeTest >> testHash [
 	edge := DirectedEdge from: 1 to: 2.
 	equivalentEdge := DirectedEdge from: 1 to: 2.
 	differentEdge := DirectedEdge from: 1 to: 3.
-	
+	self
+		assert: edge hash equals: equivalentEdge hash;
+		deny: edge hash = differentEdge hash.
+
+	edge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
+	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
+	differentEdge := DirectedEdge from: 1 to: 2 labeled: 'A different labeling object'.
 	self
 		assert: edge hash equals: equivalentEdge hash;
 		deny: edge hash = differentEdge hash
@@ -92,6 +131,14 @@ DirectedEdgeTest >> testIsIncidentTo [
 		assert: (edge isIncidentTo: 1);
 		assert: (edge isIncidentTo: 2);
 		deny: (edge isIncidentTo: 3)
+]
+
+{ #category : #tests }
+DirectedEdgeTest >> testIsSelfLoop [
+
+	self deny: (DirectedEdge from: 1 to: 2) isSelfLoop.
+
+	self assert: (DirectedEdge from: 1 to: 1) isSelfLoop
 ]
 
 { #category : #tests }
@@ -125,4 +172,32 @@ DirectedEdgeTest >> testStartsOn [
 DirectedEdgeTest >> testTarget [
 
 	self assert: (DirectedEdge from: 1 to: 2) target equals: 2
+]
+
+{ #category : #tests }
+DirectedEdgeTest >> testWithLabelDoIfUnlabeled [
+
+	| edges stream edgeFunction |
+
+	stream := WriteStream on: String new.
+	edgeFunction := [ :source :target | 
+	stream
+		nextPutAll: ('From <1s> to <2s' expandMacrosWith: source with: target);
+		cr ].
+	edges := OrderedCollection new
+		add: (DirectedEdge from: 'Home' to: 'Work' labeled: edgeFunction);
+		add: (DirectedEdge from: 'Work' to: 'Party' labeled: edgeFunction);
+		yourself.
+
+	edges
+		do: [ :edge | 
+			edge
+				withLabelDo: [ :function | function value: edge source value: edge target ]
+				ifUnlabeled: [ self fail ] ].
+	self
+		assert: stream contents
+		equals:
+			'From Home to Work
+From Work to Party
+'
 ]

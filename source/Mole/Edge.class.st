@@ -39,3 +39,9 @@ Edge >> vertexRelatedTo: aVertex [
 
 	^ self relatedVertices detect: [ :vertex | vertex ~= aVertex ]
 ]
+
+{ #category : #accessing }
+Edge >> withLabelDo: aBlock ifUnlabeled: anUnlabeledBlock [
+
+	self subclassResponsibility
+]
