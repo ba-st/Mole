@@ -46,8 +46,8 @@ UndirectedEdgeTest >> testHash [
 		deny: edge hash = differentEdge hash.
 
 	edge := UndirectedEdge relating: #(1 2) labeled: 'Some labeling object'.
-	equivalentEdge := UndirectedEdge relating: #(2 1) labeled: 'Some labeling object'.
-	differentEdge := UndirectedEdge relating: #(1 2) labeled: 'A different labeling object'.
+	equivalentEdge := UndirectedEdge relating: #(2 1) labeled: 'A different labeling object'.
+	differentEdge := UndirectedEdge relating: #(1 3) labeled: 'A different labeling object'.
 	self
 		assert: edge hash equals: equivalentEdge hash;
 		deny: edge hash = differentEdge hash

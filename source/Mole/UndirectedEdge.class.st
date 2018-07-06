@@ -45,13 +45,7 @@ UndirectedEdge >> = anObject [
 { #category : #comparing }
 UndirectedEdge >> hash [
 
-	| hashWithoutLabel |
-
-	"Not all instances of unused optional will return the same hash"
-	hashWithoutLabel := relatedVertices hash.
-	^ self
-		withLabelDo: [ :label | hashWithoutLabel bitXor: label hash ]
-		ifUnlabeled: [ hashWithoutLabel ]
+	^ relatedVertices hash
 ]
 
 { #category : #initialization }

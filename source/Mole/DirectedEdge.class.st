@@ -53,13 +53,7 @@ DirectedEdge >> goesFrom: aSourceVertex to: aTargetVertex [
 { #category : #comparing }
 DirectedEdge >> hash [
 
-	| hashWithoutLabel |
-
-	"Not all instances of unused optional will return the same hash"
-	hashWithoutLabel := source hash bitXor: target hash.
-	^ self
-		withLabelDo: [ :label | hashWithoutLabel bitXor: label hash ]
-		ifUnlabeled: [ hashWithoutLabel ]
+	^ source hash bitXor: target hash
 ]
 
 { #category : #initialization }

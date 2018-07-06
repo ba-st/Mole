@@ -107,8 +107,8 @@ DirectedEdgeTest >> testHash [
 		deny: edge hash = differentEdge hash.
 
 	edge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
-	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
-	differentEdge := DirectedEdge from: 1 to: 2 labeled: 'A different labeling object'.
+	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'A different labeling object'.
+	differentEdge := DirectedEdge from: 1 to: 3 labeled: 'A different labeling object'.
 	self
 		assert: edge hash equals: equivalentEdge hash;
 		deny: edge hash = differentEdge hash
