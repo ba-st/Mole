@@ -9,10 +9,7 @@ SmalltalkCISpec {
   ],
   #testing : {
     #coverage : {
-       #packages : [  'Mole*' ]
-    },
-    #include : {
-       #packages : [ 'Mole-Tests' ]
+       #packages : [ 'Mole*' ]
     }
   }
 }

@@ -1,30 +1,37 @@
-![Logo](resources/128.png) Mole
-===============================
-![Latest Release](https://img.shields.io/github/release/ba-st/Mole.svg) [![Build Status](https://travis-ci.org/ba-st/Mole.svg?branch=master)](https://travis-ci.org/ba-st/Mole)
-[![Coverage Status](https://coveralls.io/repos/github/ba-st/Mole/badge.svg?branch=master)](https://coveralls.io/github/ba-st/Mole?branch=master)
+<p align="center"><img src="assets/logos/128.png">
+ <h1 align="center">Mole</h1>
+  <p align="center">
+    Mole provides a model for graphs, both directed and undirected.
+    <br>
+    <a href="docs/Mole.md"><strong>Explore the docs »</strong></a>
+    <br>
+    <br>
+    <a href="https://github.com/ba-st/Mole/issues/new?labels=Type%3A+Defect">Report a defect</a>
+    |
+    <a href="https://github.com/ba-st/Mole/issues/new?labels=Type%3A+Feature">Request feature</a>
+  </p>
+</p>
 
-*Mole provides a model for graphs, both directed and undirected.*
+[![GitHub release](https://img.shields.io/github/release/ba-st/Mole.svg)](https://github.com/ba-st/Mole/releases/latest)
+[![Build Status](https://travis-ci.org/ba-st/Mole.svg?branch=master)](https://travis-ci.org/ba-st/Mole)
+[![Coverage Status](https://coveralls.io/repos/github/ba-st/Mole/badge.svg?branch=master)](https://coveralls.io/github/ba-st/Mole?branch=master)
 
 > *Name origin*: This project started as a topological model, which can be shortened to [**Topo**](https://es.wikipedia.org/wiki/Talpidae), the Spanish word for [Mole](https://en.wikipedia.org/wiki/Mole_(animal)).
 
 ## License
-The project source code is [MIT](LICENSE) licensed. Any contribution submitted to the code repository is considered to be under the same license.
+- The code is licensed under [MIT](LICENSE).
+- The documentation is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).
 
-The documentation is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+## Quick Start
 
-## Get started!
+- Download the latest [Pharo 32](https://get.pharo.org/) or [64 bits VM](https://get.pharo.org/64/).
+- Download a ready to use image from the [release page](https://github.com/ba-st/Mole/releases/latest)
+- Explore the [documentation](docs/Mole.md)
 
-- Download a [Pharo Image and VM](http://get.pharo.org)
-- Download a ready to use image of the latest stable version in the [releases page](https://github.com/ba-st/Mole/releases).
-- Check the [documentation](docs/Mole.md)
+## Installation
 
-or
-- Open a Playground and evaluate:
+To load the project in a Pharo image, or declare it as a dependency of your own project follow this [instructions](docs/Installation.md).
 
-```smalltalk
-Metacello new
-  baseline: 'Mole';
-  repository: 'github://ba-st/Mole:master/source';
-  load
-```
-to get the latest changes.
+## Contributing
+
+Check the [Contribution Guidelines](CONTRIBUTING.md)
