@@ -1,6 +1,6 @@
 Graphs
 ======
-Mole provides a model for graphs, both directed and undirected. Graphs in Mole are immutable. A graph consists on a set of vertices and edges connecting them. Any object can be used as a vertex.
+Mole provides a model for graphs, both directed and undirected, labeled and unlabeled. Graphs in Mole are immutable. A graph consists on a set of vertices and edges connecting them. Any object can be used as a vertex.
 
 Each graph can understand the following messages:
 
@@ -70,6 +70,5 @@ In addition to the messages common to all graphs, directed graphs also understan
 
 ## Future Work
 - Traversal algorithms
-- Weighted and labeled vertices/edges
 - Walks and paths
 - Union, difference and intersection
