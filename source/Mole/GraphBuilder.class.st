@@ -1,5 +1,5 @@
 "
-I'm a builder of directed graphs
+I'm a builder of graphs, both directed and undirected. Connections are declared and then directionality is defined when requesting the built instance.
 "
 Class {
 	#name : #GraphBuilder,
@@ -61,7 +61,7 @@ GraphBuilder >> connect: aSourceVertex to: aTargetVertex [
 { #category : #configuring }
 GraphBuilder >> connect: aSourceVertex to: aTargetVertex labeled: aLabel [
 
-	"In graph theory, the edge label can be any element attached to it. It is possible to label an edge with a name, a color, a weight or even a function."
+	"In graph theory, the edge label can be any element attached to it. It is possible to label an edge with a name, a color, a weight or even an object."
 
 	self
 		connect: aSourceVertex
@@ -75,7 +75,11 @@ GraphBuilder >> connect: aSourceVertex to: aTargetVertex labeledAccordingTo: aLa
 	self
 		addVertex: aSourceVertex;
 		addVertex: aTargetVertex.
-	labelByEdgeArray at: (Array with: aSourceVertex with: aTargetVertex) put: aLabelOptional
+	labelByEdgeArray
+		at:
+			{aSourceVertex.
+			aTargetVertex}
+		put: aLabelOptional
 ]
 
 { #category : #'private - accessing' }
@@ -111,6 +115,6 @@ GraphBuilder >> loopOn: aVertex labeled: aLabel [
 GraphBuilder >> undirectedEdgeFrom: edgeArray labeledAccordingTo: labelOptional [
 
 	^ UndirectedEdge
-		relating: (Bag with: edgeArray first with: edgeArray last)
+		relating: edgeArray asBag
 		labeledAccordingTo: labelOptional
 ]

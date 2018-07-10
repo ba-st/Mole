@@ -54,6 +54,7 @@ UndirectedGraphTest >> labeledGraph [
 	^ self graphBuilder
 		connect: 1 to: 2 labeled: 'W12';
 		connect: 1 to: 3 labeled: 'W13';
+		loopOn: 4 labeled: 'W44';
 		buildUndirected
 ]
 
@@ -128,40 +129,6 @@ UndirectedGraphTest >> testEdgesIncidentTo [
 
 	edges := graph edgesIncidentTo: 1.
 	self assert: edges size equals: 2
-]
-
-{ #category : #'tests - instance creation' }
-UndirectedGraphTest >> testLabeledGraph [
-
-	| graph |
-
-	graph := self labeledGraph.
-
-	self
-		assertCollection: (graph neighborsOf: 1) hasSameElements: #(2 3);
-		assertCollection: (graph neighborsOf: 2) hasSameElements: #(1);
-		assertCollection: (graph neighborsOf: 3) hasSameElements: #(1).
-
-	self
-		assertEdgesIncidentTo: 1
-			in: graph
-			match:
-			(Dictionary new
-				at: '{1, 2}' put: 'W12';
-				at: '{1, 3}' put: 'W13';
-				yourself);
-		assertEdgesIncidentTo: 2
-			in: graph
-			match:
-			(Dictionary new
-				at: '{1, 2}' put: 'W12';
-				yourself);
-		assertEdgesIncidentTo: 3
-			in: graph
-			match:
-			(Dictionary new
-				at: '{1, 3}' put: 'W13';
-				yourself)
 ]
 
 { #category : #'tests - accessing' }

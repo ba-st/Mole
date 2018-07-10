@@ -182,7 +182,7 @@ DirectedEdgeTest >> testWithLabelDoIfUnlabeled [
 	stream := WriteStream on: String new.
 	edgeFunction := [ :source :target | 
 	stream
-		nextPutAll: ('From <1s> to <2s' expandMacrosWith: source with: target);
+		nextPutAll: ('From <1s> to <2s>' expandMacrosWith: source with: target);
 		cr ].
 	edges := OrderedCollection new
 		add: (DirectedEdge from: 'Home' to: 'Work' labeled: edgeFunction);

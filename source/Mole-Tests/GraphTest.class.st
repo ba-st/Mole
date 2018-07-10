@@ -23,11 +23,10 @@ GraphTest >> assertEdgesIncidentTo: aVertex in: aGraph match: aDictionary [
 	edges
 		do: [ :edge | 
 			edge
-				withLabelDo: [ :label | labelByEdge at: edge asString put: label ]
+				withLabelDo: [ :label | labelByEdge at: edge endpoints asSortedCollection asArray asString put: label ]
 				ifUnlabeled: [ self fail ] ].
 	self assertCollection: labelByEdge keys hasSameElements: aDictionary keys.
-	aDictionary
-		keysAndValuesDo: [ :edgeString :weight | self assert: (labelByEdge at: edgeString) equals: weight ]
+	aDictionary keysAndValuesDo: [ :edgeString :weight | self assert: (labelByEdge at: edgeString) equals: weight ]
 ]
 
 { #category : #private }
@@ -90,6 +89,48 @@ GraphTest >> testIsAdjacentTo [
 		assert: (graph is: 2 adjacentTo: 3);
 		assert: (graph is: 3 adjacentTo: 2);
 		assert: (graph is: 3 adjacentTo: 4)
+]
+
+{ #category : #'tests - instance creation' }
+GraphTest >> testLabeledGraph [
+
+	| graph |
+
+	graph := self labeledGraph.
+
+	self
+		assertCollection: graph vertices hasSameElements: #(1 2 3 4);
+		assertCollection: (graph neighborsOf: 1) hasSameElements: #(2 3);
+		assertCollection: (graph neighborsOf: 2) hasSameElements: #(1);
+		assertCollection: (graph neighborsOf: 3) hasSameElements: #(1);
+		assertCollection: (graph neighborsOf: 4) hasSameElements: #(4).
+
+	self
+		assertEdgesIncidentTo: 1
+			in: graph
+			match:
+			(Dictionary new
+				at: '#(1 2)' put: 'W12';
+				at: '#(1 3)' put: 'W13';
+				yourself);
+		assertEdgesIncidentTo: 2
+			in: graph
+			match:
+			(Dictionary new
+				at: '#(1 2)' put: 'W12';
+				yourself);
+		assertEdgesIncidentTo: 3
+			in: graph
+			match:
+			(Dictionary new
+				at: '#(1 3)' put: 'W13';
+				yourself);
+		assertEdgesIncidentTo: 4
+			in: graph
+			match:
+			(Dictionary new
+				at: '#(4 4)' put: 'W44';
+				yourself)
 ]
 
 { #category : #'tests - converting' }
