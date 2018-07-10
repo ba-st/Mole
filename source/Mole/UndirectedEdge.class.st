@@ -5,7 +5,8 @@ Class {
 	#name : #UndirectedEdge,
 	#superclass : #Edge,
 	#instVars : [
-		'relatedVertices'
+		'labelOptional',
+		'endpoints'
 	],
 	#category : #Mole
 }
@@ -13,25 +14,51 @@ Class {
 { #category : #'instance creation' }
 UndirectedEdge class >> relating: aVertexCollection [
 
-	^ self new intializeRelating: aVertexCollection asSet
+	^ self relating: aVertexCollection labeledAccordingTo: Optional unused
+]
+
+{ #category : #'instance creation' }
+UndirectedEdge class >> relating: aVertexCollection labeled: aLabel [
+
+	^ self relating: aVertexCollection labeledAccordingTo: (Optional containing: aLabel)
+]
+
+{ #category : #'private - instance creation' }
+UndirectedEdge class >> relating: aVertexCollection labeledAccordingTo: anOptional [
+
+	AssertionChecker
+		enforce: [ aVertexCollection size = 2 ]
+		because: 'Undirected edges must specify exactly 2 vertices'
+		raising: InstanceCreationFailed.
+
+	^ self new intializeRelating: aVertexCollection asBag labeledAccordingTo: anOptional
 ]
 
 { #category : #comparing }
 UndirectedEdge >> = anObject [
 
-	^ self class = anObject class and: [ relatedVertices = anObject relatedVertices ]
+	^ self == anObject
+		or: [ (anObject isA: self class)
+				and: [ self endpoints = anObject endpoints and: [ self isLabeledLike: anObject ] ] ]
+]
+
+{ #category : #private }
+UndirectedEdge >> endpoints [
+
+	^ endpoints
 ]
 
 { #category : #comparing }
 UndirectedEdge >> hash [
 
-	^ relatedVertices hash
+	^ endpoints hash
 ]
 
 { #category : #initialization }
-UndirectedEdge >> intializeRelating: aVertexCollection [
+UndirectedEdge >> intializeRelating: aVertexCollection labeledAccordingTo: anOptional [
 
-	relatedVertices := aVertexCollection
+	endpoints := aVertexCollection.
+	labelOptional := anOptional
 ]
 
 { #category : #testing }
@@ -43,14 +70,22 @@ UndirectedEdge >> isDirected [
 { #category : #testing }
 UndirectedEdge >> isIncidentTo: aVertex [
 
-	^ relatedVertices includes: aVertex
+	^ endpoints includes: aVertex
+]
+
+{ #category : #private }
+UndirectedEdge >> isLabeledLike: anEdge [
+
+	^ self
+		withLabelDo: [ :label | anEdge withLabelDo: [ :edgeLabel | label = edgeLabel ] ifUnlabeled: [ false ] ]
+		ifUnlabeled: [ anEdge withLabelDo: [ false ] ifUnlabeled: [ true ] ]
 ]
 
 { #category : #printing }
 UndirectedEdge >> printOn: aStream [
 
 	aStream nextPut: ${.
-	relatedVertices
+	endpoints
 		do: [ :vertex | aStream print: vertex ]
 		separatedBy: [ aStream
 				nextPut: $,;
@@ -58,8 +93,8 @@ UndirectedEdge >> printOn: aStream [
 	aStream nextPut: $}
 ]
 
-{ #category : #private }
-UndirectedEdge >> relatedVertices [
+{ #category : #accessing }
+UndirectedEdge >> withLabelDo: aBlock ifUnlabeled: anUnlabeledBlock [
 
-	^ relatedVertices
+	^ labelOptional withContentDo: aBlock ifUnused: anUnlabeledBlock
 ]

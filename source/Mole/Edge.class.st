@@ -10,32 +10,41 @@ Class {
 	#category : #Mole
 }
 
+{ #category : #private }
+Edge >> endpoints [
+
+	self subclassResponsibility
+]
+
 { #category : #testing }
 Edge >> isDirected [
 
-	^ self subclassResponsibility
+	self subclassResponsibility
 ]
 
 { #category : #testing }
 Edge >> isIncidentTo: aVertex [
 
-	^ self subclassResponsibility
+	self subclassResponsibility
 ]
 
 { #category : #testing }
 Edge >> isSelfLoop [
 
-	^ self relatedVertices size = 1
-]
-
-{ #category : #private }
-Edge >> relatedVertices [
-
-	^ self subclassResponsibility
+	^ self endpoints asSet size = 1
 ]
 
 { #category : #accessing }
 Edge >> vertexRelatedTo: aVertex [
 
-	^ self relatedVertices detect: [ :vertex | vertex ~= aVertex ]
+	^ Bag new
+		addAll: self endpoints;
+		remove: aVertex;
+		anyOne
+]
+
+{ #category : #accessing }
+Edge >> withLabelDo: aBlock ifUnlabeled: anUnlabeledBlock [
+
+	self subclassResponsibility
 ]

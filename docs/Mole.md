@@ -7,6 +7,7 @@ Each graph can understand the following messages:
 ### Accessing
 
 - `neighborsOf: aVertex` Returns the vertices that are connected to `aVertex`
+- `edgesIncidentTo: aVertex` Returns the edges that are incident to `aVertex`
 - `order` The number of vertices
 - `size` The number of edges
 
@@ -22,17 +23,17 @@ Each graph can understand the following messages:
 
 Undirected graphs, graphs in which the two endpoints of each edge are not distinguished from each other, are modeled in `UndirectedGraph`.
 
-The easier way to create an undirected graph it's to use the builder: `UndirectedGraphBuilder`.
+The easier way to create an undirected graph it's to use the builder: `GraphBuilder` then request an undirected graph using `buildUndirected`.
 For example:
 ```smalltalk
-UndirectedGraphBuilder new
-  relate: 1 to: 2;
-  selfRelate: 1;
-  relate: 4 to: 3;
+GraphBuilder new
+  connect: 1 to: 2;
+  loopOn: 1;
+  connect: 4 to: 3;
   addVertex: 8;
-  build
+  buildUndirected
 ```
-will create an undirected graph with 5 vertices {1, 2, 3, 4, 8} and the following edges: { (1,2), (1,1), (4,3)}. The builder will take care of creating the right type of edge and adding the vertices included in edges automatically.
+will create an undirected graph with 5 vertices {1, 2, 3, 4, 8} and the following edges: {(1,2), (1,1), (4,3)}. The builder will take care of creating the right type of edge and adding the vertices included in the edges automatically.
 
 In addition to the messages common to all graphs, undirected graphs also understand:
 
@@ -43,16 +44,16 @@ In addition to the messages common to all graphs, undirected graphs also underst
 
 Directed graphs, graphs where all the edges are directed from one vertex to another, are modeled in `DirectedGraph`. A directed graph is sometimes called a digraph or a directed network.
 
-The easier way to create an directed graph it's to use the builder: `DirectedGraphBuilder`.
+The easier way to create an directed graph it's to use the builder: `GraphBuilder` then request a directed graph using `buildDirected`.
 For example:
 ```smalltalk
-DirectedGraphBuilder new
+GraphBuilder new
   connect: 1 to: 2;
   connect: 4 to: 3;
   addVertex: 5;
-  build
+  buildDirected
 ```
-will create an directed graph with 5 vertices {1, 2, 3, 4, 5} and the following edges: { 1 -> 2, 4 -> 3}.
+will create a directed graph with 5 vertices {1, 2, 3, 4, 5} and the following edges: { 1 -> 2, 4 -> 3}.
 
 In addition to the messages common to all graphs, directed graphs also understand:
 
@@ -67,6 +68,32 @@ In addition to the messages common to all graphs, directed graphs also understan
 ### Testing
 - `isAcyclic` Returns true if the graph is acyclic
 - `isCyclic` Returns true if the graph is cyclic
+
+## Weights and labels
+
+Edges in both directed and undirected graphs can have additional information embedded into them. This is generally referred to as `labeling`. A label can be just a name to identify the edge, a weight to indicate the cost of traversing it, or even complex objects like functions.
+
+To add a label, use the alternative messages in the builder: `connect:to:labeled:` and `loopOn:labeled:`:
+```smalltalk
+GraphBuilder new
+  connect: 1 to: 2 labeled: 'Simple edge';
+  connect: 4 to: 3 labeled: 8;
+  loopOn: 3 labeled: [:arguments | self logEdgeMovement: arguments ];
+  buildDirected
+```
+will create a directed graph with and edge {1 -> 2} that is named Simple edge, an edge {4 -> 3} with weight 8, and a loop {4 -> 4} with a logging function attached.
+
+To use the information in an edge label, send the message `withLabelDo:ifUnlabeled:`, for example:
+```smalltalk
+"Write information from the graph to aStream"
+anEdge withLabelDo: [:name | aStream nextPutAll: name ] ifUnlabeled: [ aStream nextPutAll: 'N/A']
+
+"Sum the distances represented by the weights in a path"
+anEdge withLabelDo: [:weight | totalDistance := totalDistance + weight ] ifUnlabeled: [ ]
+
+"Evaluate a function related to the edge traversed"
+anEdge withLabelDo: [:function | function value: evaluationContext ] ifUnlabeled: [ Error signal: 'All edges are expected to have a function']
+```
 
 ## Future Work
 - Traversal algorithms

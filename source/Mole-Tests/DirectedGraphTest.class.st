@@ -16,7 +16,7 @@ DirectedGraphTest >> cyclicGraph [
 		connect: 3 to: 4;
 		connect: 3 to: 6;
 		connect: 4 to: 2;
-		build
+		buildDirected
 ]
 
 { #category : #private }
@@ -26,9 +26,11 @@ DirectedGraphTest >> edgeOfInvalidType [
 ]
 
 { #category : #private }
-DirectedGraphTest >> graphBuilder [
+DirectedGraphTest >> edgelessGraphWith: vertices [
 
-	^ DirectedGraphBuilder new
+	^ self graphBuilder
+		addVertices: vertices;
+		buildDirected
 ]
 
 { #category : #private }
@@ -38,13 +40,66 @@ DirectedGraphTest >> graphWithFiveVerticesAndTwoEdges [
 		connect: 2 to: 3;
 		connect: 4 to: 3;
 		addVertices: #(1 5);
-		build
+		buildDirected
+]
+
+{ #category : #private }
+DirectedGraphTest >> graphWithSelfLoop [
+
+	^ self graphBuilder
+		loopOn: 2;
+		connect: 3 to: 4;
+		connect: 3 to: 5;
+		addVertices: #(1);
+		buildDirected
 ]
 
 { #category : #private }
 DirectedGraphTest >> invalidEdge [
 
 	^ DirectedEdge from: 'a' to: 'z'
+]
+
+{ #category : #private }
+DirectedGraphTest >> labeledGraph [
+
+	^ self graphBuilder
+		connect: 1 to: 2 labeled: 'W12';
+		connect: 1 to: 3 labeled: 'W13';
+		loopOn: 4 labeled: 'W44';
+		buildDirected
+]
+
+{ #category : #'tests - instance creation' }
+DirectedGraphTest >> testCreateGraphWithInvalidEdge [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self validEdge with: self invalidEdge.
+
+	self
+		should: [ DirectedGraph withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo: [ :error | 
+			self
+				assert: error messageText
+				equals: 'Some edge has endpoints not included in the vertices.' ]
+]
+
+{ #category : #'tests - instance creation' }
+DirectedGraphTest >> testCreateGraphWithInvalidEdgeType [
+
+	| vertices edges |
+
+	vertices := #('a' 'b' 'c') asSet.
+	edges := Set with: self edgeOfInvalidType.
+
+	self
+		should: [ DirectedGraph withVertices: vertices andEdges: edges ]
+		raise: InstanceCreationFailed
+		withExceptionDo:
+			[ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
 ]
 
 { #category : #'tests - accessing' }
@@ -112,16 +167,17 @@ DirectedGraphTest >> testSelfLoops [
 
 	graph := self graphBuilder
 		connect: 1 to: 2;
-		connect: 1 to: 1;
-		connect: 4 to: 4;
-		build.
+		loopOn: 1;
+		loopOn: 4;
+		buildDirected.
 
 	selfLoops := graph selfLoops.
 	self assert: selfLoops size equals: 2.
-	selfLoops do: [ :selfLoop | self assert: ((selfLoop isIncidentTo: 1) or: [ selfLoop isIncidentTo: 4 ]) ]
+	selfLoops
+		do: [ :selfLoop | self assert: ((selfLoop isIncidentTo: 1) or: [ selfLoop isIncidentTo: 4 ]) ]
 ]
 
-{ #category : #'test - topological sort' }
+{ #category : #'tests - topological sort' }
 DirectedGraphTest >> testTopologicalSort [
 
 	| graph topologicalOrder validTopologicalOrders |
@@ -131,7 +187,7 @@ DirectedGraphTest >> testTopologicalSort [
 		connect: 2 to: 3;
 		connect: 3 to: 4;
 		connect: 3 to: 6;
-		build.
+		buildDirected..
 
 	topologicalOrder := graph topologicalSort.
 	self assert: topologicalOrder size equals: 5.
@@ -141,7 +197,7 @@ DirectedGraphTest >> testTopologicalSort [
 	self assert: (validTopologicalOrders includes: topologicalOrder)
 ]
 
-{ #category : #'test - topological sort' }
+{ #category : #'tests - topological sort' }
 DirectedGraphTest >> testTopologicalSortFSUExample [
 
 	| graph sort |
@@ -157,7 +213,7 @@ DirectedGraphTest >> testTopologicalSortFSUExample [
 		connect: 'shirt' to: 'belt';
 		connect: 'shirt' to: 'tie';
 		connect: 'tie' to: 'jacket';
-		build.
+		buildDirected..
 
 	sort := graph topologicalSort.
 
@@ -172,7 +228,7 @@ DirectedGraphTest >> testTopologicalSortFSUExample [
 		assert: (sort indexOf: 'pants') < (sort indexOf: 'shoes')
 ]
 
-{ #category : #'test - topological sort' }
+{ #category : #'tests - topological sort' }
 DirectedGraphTest >> testTopologicalSortFailsWhenTheGraphIsCyclic [
 
 	| cyclicGraph |
@@ -183,7 +239,7 @@ DirectedGraphTest >> testTopologicalSortFailsWhenTheGraphIsCyclic [
 		connect: 3 to: 4;
 		connect: 3 to: 6;
 		connect: 4 to: 2;
-		build.
+		buildDirected.
 
 	self
 		should: [ cyclicGraph topologicalSort ]
@@ -191,7 +247,7 @@ DirectedGraphTest >> testTopologicalSortFailsWhenTheGraphIsCyclic [
 		withExceptionDo: [ :error | self assert: error messageText equals: 'Cannot get a topological sort on a cyclic graph.' ]
 ]
 
-{ #category : #'test - topological sort' }
+{ #category : #'tests - topological sort' }
 DirectedGraphTest >> testTopologicalSortWikipediaExample [
 
 	"Example from http://en.wikipedia.org/wiki/Topological_sorting"
@@ -208,7 +264,7 @@ DirectedGraphTest >> testTopologicalSortWikipediaExample [
 		connect: 3 to: 8;
 		connect: 3 to: 10;
 		connect: 8 to: 9;
-		build.
+		buildDirected..
 
 	"Anyone of this is a valid topological sort"
 	expectedResults := 
@@ -223,7 +279,7 @@ DirectedGraphTest >> testTopologicalSortWikipediaExample [
 	self assert: (expectedResults includes: graph topologicalSort)
 ]
 
-{ #category : #'test - topological sort' }
+{ #category : #'tests - topological sort' }
 DirectedGraphTest >> testTopologicalSortWithoutEdges [
 
 	| graph expectedResults |
@@ -242,9 +298,9 @@ DirectedGraphTest >> testVerticesReachableFrom [
 
 	graph := self graphBuilder
 		connect: 1 to: 2;
-		connect: 1 to: 1;
-		connect: 4 to: 4;
-		build.
+		loopOn: 1;
+		loopOn: 4;
+		buildDirected.
 
 	vertices := graph verticesReachableFrom: 1.
 	self
