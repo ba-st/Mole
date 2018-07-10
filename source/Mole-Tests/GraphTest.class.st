@@ -23,10 +23,11 @@ GraphTest >> assertEdgesIncidentTo: aVertex in: aGraph match: aDictionary [
 	edges
 		do: [ :edge | 
 			edge
-				withLabelDo: [ :label | labelByEdge at: edge endpoints asSortedCollection asArray asString put: label ]
+				withLabelDo: [ :label | labelByEdge at: edge endpoints sorted asString put: label ]
 				ifUnlabeled: [ self fail ] ].
 	self assertCollection: labelByEdge keys hasSameElements: aDictionary keys.
-	aDictionary keysAndValuesDo: [ :edgeString :weight | self assert: (labelByEdge at: edgeString) equals: weight ]
+	aDictionary
+		keysAndValuesDo: [ :edgeString :weight | self assert: (labelByEdge at: edgeString) equals: weight ]
 ]
 
 { #category : #private }
