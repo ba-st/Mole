@@ -6,7 +6,7 @@ You can load **Mole** evaluating:
 ```smalltalk
 Metacello new
 	baseline: 'Mole';
-	repository: 'github://ba-st/Mole:master/repository';
+	repository: 'github://ba-st/Mole:master/source';
 	load.
 ```
 >  Change `master` to some released version if you want a pinned version
