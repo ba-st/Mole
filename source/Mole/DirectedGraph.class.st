@@ -9,7 +9,7 @@ Class {
 		'edges',
 		'isAcyclic'
 	],
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #'private - testing' }
@@ -22,6 +22,13 @@ DirectedGraph class >> isCompatible: anEdge [
 DirectedGraph class >> withValidVertices: aVertexCollection andEdges: anEdgeCollection [
 
 	^ self new initializeWithVertices: aVertexCollection asSet andEdges: anEdgeCollection asSet
+]
+
+{ #category : #accessing }
+DirectedGraph >> directSuccessorsOf: aSourceVertex [
+
+	^ (self edgesOutgoingFrom: aSourceVertex)
+		collect: [ :directedEdge | directedEdge target ]
 ]
 
 { #category : #'private - accessing' }
@@ -121,12 +128,15 @@ DirectedGraph >> verticesReachableFrom: aSourceVertex collectedOn: reachableVert
 
 	| successors successorsNotVisited |
 
-	successors := (self edgesOutgoingFrom: aSourceVertex) collect: [ :directedEdge | directedEdge target ].
-	successorsNotVisited := successors reject: [ :vertex | reachableVertices includes: vertex ].
+	successors := self directSuccessorsOf: aSourceVertex.
+	successorsNotVisited := successors
+		reject: [ :vertex | reachableVertices includes: vertex ].
 
 	reachableVertices addAll: successors.
 
-	successorsNotVisited do: [ :successor | self verticesReachableFrom: successor collectedOn: reachableVertices ]
+	successorsNotVisited
+		do:
+			[ :successor | self verticesReachableFrom: successor collectedOn: reachableVertices ]
 ]
 
 { #category : #'private - accessing' }

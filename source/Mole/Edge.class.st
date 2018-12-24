@@ -7,7 +7,7 @@ In an undirected simple graph, an edge may be represented as the set of its vert
 Class {
 	#name : #Edge,
 	#superclass : #Object,
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #private }

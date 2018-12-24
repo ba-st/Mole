@@ -8,7 +8,7 @@ Class {
 		'vertices',
 		'labelByEdgeArray'
 	],
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #configuring }

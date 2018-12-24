@@ -4,7 +4,7 @@ I'm a test case for DirectedEdge
 Class {
 	#name : #DirectedEdgeTest,
 	#superclass : #TestCase,
-	#category : #'Mole-Tests'
+	#category : #'Mole-Tests-Graph'
 }
 
 { #category : #tests }

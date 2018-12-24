@@ -8,7 +8,7 @@ Implementation details
 Class {
 	#name : #Graph,
 	#superclass : #Object,
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #'private - testing' }
@@ -45,6 +45,12 @@ Graph class >> withVertices: aVertexCollection andEdges: anEdgeCollection [
 		buildAndCheck.
 
 	^ self withValidVertices: aVertexCollection andEdges: anEdgeCollection
+]
+
+{ #category : #accessing }
+Graph >> directSuccessorsOf: aVertex [
+
+	self subclassResponsibility
 ]
 
 { #category : #'private - accessing' }

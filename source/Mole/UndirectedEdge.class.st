@@ -8,7 +8,7 @@ Class {
 		'labelOptional',
 		'endpoints'
 	],
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #'instance creation' }

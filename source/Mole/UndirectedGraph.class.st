@@ -8,7 +8,7 @@ Class {
 		'vertices',
 		'edges'
 	],
-	#category : #Mole
+	#category : #'Mole-Graph'
 }
 
 { #category : #'private - testing' }
@@ -37,6 +37,15 @@ UndirectedGraph >> degreeOf: aVertex [
 						ifTrue: [ sum + 2 ]
 						ifFalse: [ sum + 1 ] ]
 				ifFalse: [ sum ] ]
+]
+
+{ #category : #accessing }
+UndirectedGraph >> directSuccessorsOf: aVertex [
+
+	^ (self edgesIncidentTo: aVertex) flatCollect: [ :undirectedEdge |
+		undirectedEdge isSelfLoop
+			ifTrue: [ Array with: aVertex ]
+			ifFalse: [ undirectedEdge endpoints copyWithout: aVertex ] ]
 ]
 
 { #category : #'private - accessing' }

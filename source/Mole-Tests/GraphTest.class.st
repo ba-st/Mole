@@ -4,7 +4,7 @@ I'm an abstract test case for Graph behavior
 Class {
 	#name : #GraphTest,
 	#superclass : #TestCase,
-	#category : #'Mole-Tests'
+	#category : #'Mole-Tests-Graph'
 }
 
 { #category : #testing }
