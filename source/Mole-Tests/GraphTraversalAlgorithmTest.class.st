@@ -1,5 +1,5 @@
 "
-I'm an abstract test case for GraphShortestPathWalker
+I'm an abstract test case for GraphTraversalAlgorithmTest
 "
 Class {
 	#name : #GraphTraversalAlgorithmTest,
@@ -11,6 +11,16 @@ Class {
 GraphTraversalAlgorithmTest class >> isAbstract [
 
 	^ self name = #GraphTraversalAlgorithmTest
+]
+
+{ #category : #assertions }
+GraphTraversalAlgorithmTest >> assertTraversing: aGraph from: aSourceVertex visitsInOrder: aVertexCollection [ 
+	
+	| path | 
+	
+	path := OrderedCollection new. 
+	self graphTraversalAlgorithm traverse: aGraph from: aSourceVertex doing: [ :node | path add: node ].
+	self assert: path asArray equals: aVertexCollection.
 ]
 
 { #category : #private }
@@ -27,12 +37,6 @@ GraphTraversalAlgorithmTest >> directedGraph [
 ]
 
 { #category : #private }
-GraphTraversalAlgorithmTest >> directedGraphExpectedNodesTraversed [
-
-	self subclassResponsibility
-]
-
-{ #category : #private }
 GraphTraversalAlgorithmTest >> directedTree [
 
 	^ self graphBuilder
@@ -46,9 +50,29 @@ GraphTraversalAlgorithmTest >> directedTree [
 ]
 
 { #category : #private }
-GraphTraversalAlgorithmTest >> directedTreeExpectedNodesTraversed [
+GraphTraversalAlgorithmTest >> disconnectedDirectedGraph [
 
-	^ self subclassResponsibility
+	^ self graphBuilder
+		connect: 1 to: 2;
+		connect: 1 to: 3;
+		connect: 3 to: 2;
+		connect: 6 to: 4;
+		connect: 4 to: 5;
+		loopOn: 7;
+		buildDirected
+]
+
+{ #category : #private }
+GraphTraversalAlgorithmTest >> disconnectedUndirectedGraph [
+
+	^ self graphBuilder
+		connect: 1 to: 2;
+		connect: 1 to: 3;
+		connect: 3 to: 2;
+		connect: 6 to: 4;
+		connect: 4 to: 5;
+		loopOn: 7;
+		buildUndirected
 ]
 
 { #category : #private }
@@ -63,45 +87,6 @@ GraphTraversalAlgorithmTest >> graphTraversalAlgorithm [
 	^ self subclassResponsibility
 ]
 
-{ #category : #tests }
-GraphTraversalAlgorithmTest >> testTraverseDirectedGraph [
-
-	| graph path |
-
-	graph := self directedGraph.
-	path := OrderedCollection new.
-	
-	self graphTraversalAlgorithm traverse: graph from: 0 doing: [ :node | path add: node ].
-	
-	self assert: path asArray equals: self directedGraphExpectedNodesTraversed
-]
-
-{ #category : #tests }
-GraphTraversalAlgorithmTest >> testTraverseDirectedTree [
-
-	| graph path |
-
-	graph := self directedTree.
-	path := OrderedCollection new.
-	
-	self graphTraversalAlgorithm traverse: graph from: 0 doing: [ :node | path add: node ].
-	
-	self assert: path asArray equals: self directedTreeExpectedNodesTraversed
-]
-
-{ #category : #tests }
-GraphTraversalAlgorithmTest >> testTraverseUndirectedGraph [
-
-	| graph path |
-
-	graph := self undirectedGraph.
-	path := OrderedCollection new.
-	
-	self graphTraversalAlgorithm traverse: graph from: 0 doing: [ :node | path add: node ].
-	
-	self assert: path asArray equals: self undirectedGraphExpectedNodesTraversed
-]
-
 { #category : #private }
 GraphTraversalAlgorithmTest >> undirectedGraph [
 
@@ -113,10 +98,4 @@ GraphTraversalAlgorithmTest >> undirectedGraph [
 		connect: 2 to: 1;
 		connect: 4 to: 2;
 		buildUndirected
-]
-
-{ #category : #private }
-GraphTraversalAlgorithmTest >> undirectedGraphExpectedNodesTraversed [
-
-	self subclassResponsibility
 ]

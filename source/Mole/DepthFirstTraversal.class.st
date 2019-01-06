@@ -15,15 +15,15 @@ DepthFirstTraversal >> traverse: aGraph from: aSourceVertex doing: aBlock [
 	(aGraph includesVertex: aSourceVertex)
 		ifTrue: [ aBlock value: aSourceVertex ].
 
-	self traverse: aGraph from: aSourceVertex doing: aBlock havingVisited: OrderedCollection new.
+	self traverse: aGraph from: aSourceVertex doing: aBlock havingVisited: (OrderedCollection with: aSourceVertex).
 ]
 
 { #category : #'private-traverse' }
 DepthFirstTraversal >> traverse: aGraph from: aSourceVertex doing: aBlock havingVisited: aVertexCollection [
 
-	aVertexCollection add: aSourceVertex.
 	(aGraph directSuccessorsOf: aSourceVertex) do: [ :neighbor |
 		(aVertexCollection includes: neighbor) ifFalse: [
 			aBlock value: neighbor.
+			aVertexCollection add: neighbor.
 			self traverse: aGraph from: neighbor doing: aBlock havingVisited: aVertexCollection ] ]
 ]

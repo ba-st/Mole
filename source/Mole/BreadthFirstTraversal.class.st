@@ -15,7 +15,7 @@ BreadthFirstTraversal >> traverse: aGraph from: aSourceVertex doing: aBlock [
 	(aGraph includesVertex: aSourceVertex)
 		ifTrue: [ aBlock value: aSourceVertex ].
 
-	self traverse: aGraph from: aSourceVertex doing: aBlock havingVisited: OrderedCollection new.
+	self traverse: aGraph from: aSourceVertex doing: aBlock havingVisited: (OrderedCollection with: aSourceVertex).
 ]
 
 { #category : #'private-traverse' }
@@ -23,8 +23,8 @@ BreadthFirstTraversal >> traverse: aGraph from: aSourceVertex doing: aBlock havi
 
 	| neighborsToVisit |
 
-	neighborsToVisit := (aGraph directSuccessorsOf: aSourceVertex) reject: [ :neighbor | aVertexCollection includes: neighbor ].
-	aVertexCollection add: aSourceVertex; addAll: neighborsToVisit.
+	neighborsToVisit := (aGraph directSuccessorsOf: aSourceVertex) copyWithoutAll: aVertexCollection.
+	aVertexCollection addAll: neighborsToVisit.
 	neighborsToVisit do: aBlock; do: [ :neighbor | self traverse: aGraph from: neighbor doing: aBlock havingVisited: aVertexCollection ]
 
 ]

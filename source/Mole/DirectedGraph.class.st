@@ -27,8 +27,7 @@ DirectedGraph class >> withValidVertices: aVertexCollection andEdges: anEdgeColl
 { #category : #accessing }
 DirectedGraph >> directSuccessorsOf: aSourceVertex [
 
-	^ (self edgesOutgoingFrom: aSourceVertex)
-		collect: [ :directedEdge | directedEdge target ]
+	^ (self edgesOutgoingFrom: aSourceVertex) collect: #target
 ]
 
 { #category : #'private - accessing' }
