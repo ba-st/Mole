@@ -13,8 +13,8 @@
 </p>
 
 [![GitHub release](https://img.shields.io/github/release/ba-st/Mole.svg)](https://github.com/ba-st/Mole/releases/latest)
-[![Build Status](https://travis-ci.org/ba-st/Mole.svg?branch=master)](https://travis-ci.org/ba-st/Mole)
-[![Coverage Status](https://coveralls.io/repos/github/ba-st/Mole/badge.svg?branch=master)](https://coveralls.io/github/ba-st/Mole?branch=master)
+[![Build Status](https://travis-ci.org/ba-st/Mole.svg?branch=release-candidate)](https://travis-ci.org/ba-st/Mole)
+[![Coverage Status](https://coveralls.io/repos/github/ba-st/Mole/badge.svg?branch=release-candidate)](https://coveralls.io/github/ba-st/Mole?branch=release-candidate)
 
 > *Name origin*: This project started as a topological model, which can be shortened to [**Topo**](https://es.wikipedia.org/wiki/Talpidae), the Spanish word for [Mole](https://en.wikipedia.org/wiki/Mole_(animal)).
 
