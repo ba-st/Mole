@@ -4,7 +4,7 @@ I'm a test case for UndirectedEdge
 Class {
 	#name : #UndirectedEdgeTest,
 	#superclass : #TestCase,
-	#category : #'Mole-Tests'
+	#category : #'Mole-Tests-Graph'
 }
 
 { #category : #tests }

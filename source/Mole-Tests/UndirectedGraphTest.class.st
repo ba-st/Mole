@@ -4,7 +4,7 @@ I'm a test case for UndirectedGraph
 Class {
 	#name : #UndirectedGraphTest,
 	#superclass : #GraphTest,
-	#category : #'Mole-Tests'
+	#category : #'Mole-Tests-Graph'
 }
 
 { #category : #private }
@@ -114,6 +114,36 @@ UndirectedGraphTest >> testDegreeOf [
 		buildUndirected.
 
 	self assert: (graph degreeOf: 1) equals: 2
+]
+
+{ #category : #'tests - accessing' }
+UndirectedGraphTest >> testDirectSuccessorsOf [
+
+	| graph vertices |
+
+	graph := self graphBuilder
+		connect: 1 to: 2;
+		loopOn: 1;
+		loopOn: 4;
+		connect: 2 to: 3;
+		buildUndirected.
+
+	vertices := graph directSuccessorsOf: 1.
+	self
+		assert: vertices size equals: 2;
+		assert: (vertices includes: 2);
+		assert: (vertices includes: 1).
+
+	vertices := graph directSuccessorsOf: 4.
+	self
+		assert: vertices size equals: 1;
+		assert: (vertices includes: 4).
+
+	vertices := graph directSuccessorsOf: 2.
+	self 
+		assert: vertices size equals: 2;
+		assert: (vertices includes: 3);
+		assert: (vertices includes: 1)
 ]
 
 { #category : #'tests - accessing' }

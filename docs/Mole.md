@@ -95,7 +95,19 @@ anEdge withLabelDo: [:weight | totalDistance := totalDistance + weight ] ifUnlab
 anEdge withLabelDo: [:function | function value: evaluationContext ] ifUnlabeled: [ Error signal: 'All edges are expected to have a function']
 ```
 
+## Traversing 
+
+The traversing algorithm refers to the process of visiting each reachable vertex of a (directed or undirected) graph from a source vertex. The two most well known algorithms are `Depth First Search` and `Breadth First Search`. 
+
+![BFS vs DFS](dfsbfs.gif)
+
+To traverse a graph using any of these methods just write:
+
+```smalltalk
+BreadthFirstTraversal new traverse: aGraph from: aSourceVertex doing: [ :visitedVertex | path add: visitedVertex ]
+DepthFirstTraversal new traverse: aGraph from: aSourceVertex doing: [ :visitedVertex | path add: visitedVertex ]
+```
+
 ## Future Work
-- Traversal algorithms
 - Walks and paths
 - Union, difference and intersection
