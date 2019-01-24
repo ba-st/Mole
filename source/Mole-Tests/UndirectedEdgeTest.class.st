@@ -59,18 +59,12 @@ UndirectedEdgeTest >> testInvalidCreation [
 	self
 		should: [ UndirectedEdge relating: #() ]
 		raise: InstanceCreationFailed
-		withExceptionDo: [ :exception | 
-			self
-				assert: exception messageText
-				equals: 'Undirected edges must specify exactly 2 vertices' ].
+		withMessageText: 'Undirected edges must specify exactly 2 vertices'.
 
 	self
 		should: [ UndirectedEdge relating: #(1 2 3) ]
 		raise: InstanceCreationFailed
-		withExceptionDo: [ :exception | 
-			self
-				assert: exception messageText
-				equals: 'Undirected edges must specify exactly 2 vertices' ]
+		withMessageText: 'Undirected edges must specify exactly 2 vertices'
 ]
 
 { #category : #tests }

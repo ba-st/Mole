@@ -69,10 +69,7 @@ UndirectedGraphTest >> testCreateGraphWithInvalidEdge [
 	self
 		should: [ UndirectedGraph withVertices: vertices andEdges: edges ]
 		raise: InstanceCreationFailed
-		withExceptionDo: [ :error | 
-			self
-				assert: error messageText
-				equals: 'Some edge has endpoints not included in the vertices.' ]
+		withMessageText: 'Some edge has endpoints not included in the vertices.'
 ]
 
 { #category : #'tests - instance creation' }
@@ -86,8 +83,7 @@ UndirectedGraphTest >> testCreateGraphWithInvalidEdgeType [
 	self
 		should: [ UndirectedGraph withVertices: vertices andEdges: edges ]
 		raise: InstanceCreationFailed
-		withExceptionDo:
-			[ :error | self assert: error messageText equals: 'Some edge is incompatible with this type of graph.' ]
+		withMessageText: 'Some edge is incompatible with this type of graph.'
 ]
 
 { #category : #'tests - accessing' }
