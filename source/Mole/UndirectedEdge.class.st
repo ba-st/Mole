@@ -37,9 +37,10 @@ UndirectedEdge class >> relating: aVertexCollection labeledAccordingTo: anOption
 { #category : #comparing }
 UndirectedEdge >> = anObject [
 
-	^ self == anObject
-		or: [ (anObject isA: self class)
-				and: [ self endpoints = anObject endpoints and: [ self isLabeledLike: anObject ] ] ]
+	^ self equalityChecker
+		compare: #endpoints;
+		compareWith: [ :selfEdge :otherEdge | selfEdge isLabeledLike: otherEdge ];
+		checkAgainst: anObject
 ]
 
 { #category : #private }

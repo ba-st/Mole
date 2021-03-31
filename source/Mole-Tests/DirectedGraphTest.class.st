@@ -289,19 +289,21 @@ DirectedGraphTest >> testTopologicalSortWikipediaExample [
 		connect: 3 to: 8;
 		connect: 3 to: 10;
 		connect: 8 to: 9;
-		buildDirected..
+		buildDirected.
 
 	"Anyone of this is a valid topological sort"
 	expectedResults := 
 		{#(3 5 7 11 8 2 9 10).
-		#(7 5 11 2 3 10 8 9).
 		#(3 7 8 5 11 10 9 2).
 		#(3 7 5 8 11 9 10 2).
 		#(3 5 7 8 11 9 2 10).
 		#(7 3 5 11 8 9 10 2).
+		#(7 5 3 11 8 9 10 2).
+		#(7 5 11 2 3 10 8 9).
 		#(5 7 3 11 8 10 2 9)}.
+		
 
-	self assert: (expectedResults includes: graph topologicalSort)
+	self assert: expectedResults includes: graph topologicalSort
 ]
 
 { #category : #'tests - topological sort' }

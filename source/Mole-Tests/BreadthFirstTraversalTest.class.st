@@ -26,11 +26,11 @@ BreadthFirstTraversalTest >> testTraverseDirectedGraph [
 { #category : #tests }
 BreadthFirstTraversalTest >> testTraverseDirectedTree [
 
-	| graph |
-
-	graph := self directedTree.
-	
-	self assertTraversing: graph from: 0 visitsInOrder: #(0 1 2 4 3 5)
+	self
+		assertTraversing: self directedTree
+		from: 0
+		visitsInOrderAnyIn:
+		#( #( 0 1 2 4 3 5 ) #( 0 4 1 2 5 3 ) #( 0 2 1 4 3 5 ) )
 ]
 
 { #category : #tests }

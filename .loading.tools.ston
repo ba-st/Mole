@@ -3,14 +3,11 @@ SmalltalkCISpec {
     SCIMetacelloLoadSpec {
       #baseline : 'Mole',
       #directory : 'source',
-      #load : [ 'CI' ],
+      #load : [ 'Tools' ],
       #platforms : [  #pharo ]
     }
   ],
   #testing : {
-    #coverage : {
-      #packages : [ 'Mole*' ],
-      #format: #lcov
-    }
+    #failOnZeroTests : false
   }
 }
