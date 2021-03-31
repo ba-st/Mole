@@ -19,8 +19,8 @@ UndirectedEdgeTest >> testEquals [
 		assert: edge equals: edge;
 		assert: edge equals: equivalentEdge;
 		assert: equivalentEdge equals: edge;
-		deny: edge = differentEdge;
-		deny: differentEdge = edge.
+		deny: edge equals: differentEdge;
+		deny: differentEdge equals: edge.
 
 	edge := UndirectedEdge relating: #(1 2) labeled: 'Some labeling object'.
 	equivalentEdge := UndirectedEdge relating: #(2 1) labeled: 'Some labeling object'.
@@ -29,8 +29,8 @@ UndirectedEdgeTest >> testEquals [
 		assert: edge equals: edge;
 		assert: edge equals: equivalentEdge;
 		assert: equivalentEdge equals: edge;
-		deny: edge = differentEdge;
-		deny: differentEdge = edge
+		deny: edge equals: differentEdge;
+		deny: differentEdge equals: edge
 ]
 
 { #category : #tests }
@@ -43,14 +43,14 @@ UndirectedEdgeTest >> testHash [
 	differentEdge := UndirectedEdge relating: #(2 3).
 	self
 		assert: edge hash equals: equivalentEdge hash;
-		deny: edge hash = differentEdge hash.
+		deny: edge hash equals: differentEdge hash.
 
 	edge := UndirectedEdge relating: #(1 2) labeled: 'Some labeling object'.
 	equivalentEdge := UndirectedEdge relating: #(2 1) labeled: 'A different labeling object'.
 	differentEdge := UndirectedEdge relating: #(1 3) labeled: 'A different labeling object'.
 	self
 		assert: edge hash equals: equivalentEdge hash;
-		deny: edge hash = differentEdge hash
+		deny: edge hash equals: differentEdge hash
 ]
 
 { #category : #tests }

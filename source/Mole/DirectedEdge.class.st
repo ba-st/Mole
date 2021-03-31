@@ -33,9 +33,10 @@ DirectedEdge class >> from: aSource to: aTarget labeledAccordingTo: anOptional [
 { #category : #comparing }
 DirectedEdge >> = anObject [
 
-	^ self == anObject
-		or: [ (anObject isA: self class)
-				and: [ (anObject goesFrom: source to: target) and: [ self isLabeledLike: anObject ] ] ]
+	^ self equalityChecker
+		compareWith: [ :selfEdge :otherEdge | otherEdge goesFrom: selfEdge source to: selfEdge target ];
+		compareWith: [ :selfEdge :otherEdge | selfEdge isLabeledLike: otherEdge ];
+		checkAgainst: anObject
 ]
 
 { #category : #testing }
@@ -59,7 +60,7 @@ DirectedEdge >> goesFrom: aSourceVertex to: aTargetVertex [
 { #category : #comparing }
 DirectedEdge >> hash [
 
-	^ source hash bitXor: target hash
+	^ self equalityHashCombinator combineHashOf: source with: target
 ]
 
 { #category : #initialization }

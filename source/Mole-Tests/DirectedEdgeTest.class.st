@@ -32,8 +32,8 @@ DirectedEdgeTest >> testEquals [
 		assert: edge equals: edge;
 		assert: edge equals: equivalentEdge;
 		assert: equivalentEdge equals: edge;
-		deny: edge = differentEdge;
-		deny: differentEdge = edge.
+		deny: edge equals: differentEdge;
+		deny: differentEdge equals: edge.
 
 	edge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
 	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
@@ -42,8 +42,8 @@ DirectedEdgeTest >> testEquals [
 		assert: edge equals: edge;
 		assert: edge equals: equivalentEdge;
 		assert: equivalentEdge equals: edge;
-		deny: edge = differentEdge;
-		deny: differentEdge = edge
+		deny: edge equals: differentEdge;
+		deny: differentEdge equals: edge
 ]
 
 { #category : #tests }
@@ -104,14 +104,14 @@ DirectedEdgeTest >> testHash [
 	differentEdge := DirectedEdge from: 1 to: 3.
 	self
 		assert: edge hash equals: equivalentEdge hash;
-		deny: edge hash = differentEdge hash.
+		deny: edge hash equals: differentEdge hash.
 
 	edge := DirectedEdge from: 1 to: 2 labeled: 'Some labeling object'.
 	equivalentEdge := DirectedEdge from: 1 to: 2 labeled: 'A different labeling object'.
 	differentEdge := DirectedEdge from: 1 to: 3 labeled: 'A different labeling object'.
 	self
 		assert: edge hash equals: equivalentEdge hash;
-		deny: edge hash = differentEdge hash
+		deny: edge hash equals: differentEdge hash
 ]
 
 { #category : #tests }
@@ -177,25 +177,29 @@ DirectedEdgeTest >> testTarget [
 { #category : #tests }
 DirectedEdgeTest >> testWithLabelDoIfUnlabeled [
 
-	| edges stream edgeFunction |
+	| edges contents edgeFunction |
 
-	stream := WriteStream on: String new.
-	edgeFunction := [ :source :target | 
-	stream
-		nextPutAll: ('From <1s> to <2s>' expandMacrosWith: source with: target);
-		cr ].
-	edges := OrderedCollection new
-		add: (DirectedEdge from: 'Home' to: 'Work' labeled: edgeFunction);
-		add: (DirectedEdge from: 'Work' to: 'Party' labeled: edgeFunction);
-		yourself.
+	contents := String
+		streamContents: [ :stream | 
+			edgeFunction := [ :source :target | 
+			stream
+				nextPutAll: ( 'From <1s> to <2s>' expandMacrosWith: source with: target );
+				cr
+			].
+			edges := OrderedCollection new
+				add: ( DirectedEdge from: 'Home' to: 'Work' labeled: edgeFunction );
+				add: ( DirectedEdge from: 'Work' to: 'Party' labeled: edgeFunction );
+				yourself.
 
-	edges
-		do: [ :edge | 
-			edge
-				withLabelDo: [ :function | function value: edge source value: edge target ]
-				ifUnlabeled: [ self fail ] ].
+			edges
+				do: [ :edge | 
+					edge
+						withLabelDo: [ :function | function value: edge source value: edge target ]
+						ifUnlabeled: [ self fail ]
+					]
+			].
 	self
-		assert: stream contents
+		assert: contents
 		equals:
 			'From Home to Work
 From Work to Party
