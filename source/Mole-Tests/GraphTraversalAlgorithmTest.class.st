@@ -14,13 +14,24 @@ GraphTraversalAlgorithmTest class >> isAbstract [
 ]
 
 { #category : #assertions }
-GraphTraversalAlgorithmTest >> assertTraversing: aGraph from: aSourceVertex visitsInOrder: aVertexCollection [ 
-	
-	| path | 
-	
-	path := OrderedCollection new. 
-	self graphTraversalAlgorithm traverse: aGraph from: aSourceVertex doing: [ :node | path add: node ].
-	self assert: path asArray equals: aVertexCollection.
+GraphTraversalAlgorithmTest >> assertTraversing: aGraph from: aSourceVertex visitsInOrder: aVertexCollection [
+
+	self
+		assertTraversing: aGraph
+		from: aSourceVertex
+		visitsInOrderAnyIn: { aVertexCollection }
+]
+
+{ #category : #assertions }
+GraphTraversalAlgorithmTest >> assertTraversing: aGraph from: aSourceVertex visitsInOrderAnyIn: vertexCollections [
+
+	| path |
+	path := OrderedCollection new.
+	self graphTraversalAlgorithm
+		traverse: aGraph
+		from: aSourceVertex
+		doing: [ :node | path add: node ].
+	self assert: vertexCollections includes: path asArray
 ]
 
 { #category : #private }
