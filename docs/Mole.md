@@ -1,6 +1,6 @@
 Graphs
 ======
-Mole provides a model for graphs, both directed and undirected, labeled and unlabeled. Graphs in Mole are immutable. A graph consists on a set of vertices and edges connecting them. Any object can be used as a vertex.
+Mole provides a model for graphs, both directed and undirected, labeled and unlabeled. Graphs in Mole are immutable. A graph consists of a set of vertices and edges connecting them. Any object can be used as a vertex.
 
 Each graph can understand the following messages:
 
@@ -23,7 +23,7 @@ Each graph can understand the following messages:
 
 Undirected graphs, graphs in which the two endpoints of each edge are not distinguished from each other, are modeled in `UndirectedGraph`.
 
-The easier way to create an undirected graph it's to use the builder: `GraphBuilder` then request an undirected graph using `buildUndirected`.
+The easier way to create an undirected graph it's to use `GraphBuilder` then request an undirected graph using `buildUndirected`.
 For example:
 ```smalltalk
 GraphBuilder new
@@ -37,14 +37,14 @@ will create an undirected graph with 5 vertices {1, 2, 3, 4, 8} and the followin
 
 In addition to the messages common to all graphs, undirected graphs also understand:
 
-- `degreeOf: aVertex`  The degree (or valency) of a vertex is the number of edges incident to the vertex.	A special case is a self loop, which adds two to the degree.
+- `degreeOf: aVertex`  The degree (or valency) of a vertex is the number of edges incident to the vertex.	A special case is a self-loop, which adds two to the degree.
 - `edgesIncidentTo: aVertex`
 
 ## Directed Graph
 
 Directed graphs, graphs where all the edges are directed from one vertex to another, are modeled in `DirectedGraph`. A directed graph is sometimes called a digraph or a directed network.
 
-The easier way to create an directed graph it's to use the builder: `GraphBuilder` then request a directed graph using `buildDirected`.
+The easier way to create a directed graph it's to use `GraphBuilder` then request a directed graph using `buildDirected`.
 For example:
 ```smalltalk
 GraphBuilder new
@@ -71,7 +71,7 @@ In addition to the messages common to all graphs, directed graphs also understan
 
 ## Weights and labels
 
-Edges in both directed and undirected graphs can have additional information embedded into them. This is generally referred to as `labeling`. A label can be just a name to identify the edge, a weight to indicate the cost of traversing it, or even complex objects like functions.
+Edges in both directed and undirected graphs can have additional information embedded into them. This is generally referred to as `labeling`. A label can be just a name to identify the edge, a weight to indicate the cost of traversing it or even complex objects like functions.
 
 To add a label, use the alternative messages in the builder: `connect:to:labeled:` and `loopOn:labeled:`:
 ```smalltalk
@@ -95,9 +95,9 @@ anEdge withLabelDo: [:weight | totalDistance := totalDistance + weight ] ifUnlab
 anEdge withLabelDo: [:function | function value: evaluationContext ] ifUnlabeled: [ Error signal: 'All edges are expected to have a function']
 ```
 
-## Traversing 
+## Traversing
 
-The traversing algorithm refers to the process of visiting each reachable vertex of a (directed or undirected) graph from a source vertex. The two most well known algorithms are `Depth First Search` and `Breadth First Search`. 
+The traversing algorithm refers to the process of visiting each reachable vertex of a (directed or undirected) graph from a source vertex. The two most well-known algorithms are `Depth-First Search` and `Breadth-First Search`.
 
 ![BFS vs DFS](dfsbfs.gif)
 
@@ -110,4 +110,4 @@ DepthFirstTraversal new traverse: aGraph from: aSourceVertex doing: [ :visitedVe
 
 ## Future Work
 - Walks and paths
-- Union, difference and intersection
+- Union, difference, and intersection
