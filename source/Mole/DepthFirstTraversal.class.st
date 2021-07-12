@@ -5,7 +5,7 @@ The algorithm begins with a chosen ""root"" vertex; it then iteratively transiti
 "
 Class {
 	#name : #DepthFirstTraversal,
-	#superclass : #GraphTraversalAlgorithm,
+	#superclass : #GraphTraversal,
 	#category : #'Mole-Traversal'
 }
 

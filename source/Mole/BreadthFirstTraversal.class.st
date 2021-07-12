@@ -5,7 +5,7 @@ It starts at the tree root (or some arbitrary node of a graph), and explores all
 "
 Class {
 	#name : #BreadthFirstTraversal,
-	#superclass : #GraphTraversalAlgorithm,
+	#superclass : #GraphTraversal,
 	#category : #'Mole-Traversal'
 }
 
