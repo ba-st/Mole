@@ -31,7 +31,7 @@ UndirectedEdge class >> relating: aVertexCollection labeledAccordingTo: anOption
 		because: 'Undirected edges must specify exactly 2 vertices'
 		raising: InstanceCreationFailed.
 
-	^ self new intializeRelating: aVertexCollection asBag labeledAccordingTo: anOptional
+	^ self new initializeRelating: aVertexCollection asBag labeledAccordingTo: anOptional
 ]
 
 { #category : #comparing }
@@ -56,7 +56,7 @@ UndirectedEdge >> hash [
 ]
 
 { #category : #initialization }
-UndirectedEdge >> intializeRelating: aVertexCollection labeledAccordingTo: anOptional [
+UndirectedEdge >> initializeRelating: aVertexCollection labeledAccordingTo: anOptional [
 
 	endpoints := aVertexCollection.
 	labelOptional := anOptional
