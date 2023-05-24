@@ -14,6 +14,7 @@ Mole provides a model for graphs, both directed and undirected.
 [![Pharo 8.0](https://img.shields.io/badge/Pharo-8.0-informational)](https://pharo.org)
 [![Pharo 9.0](https://img.shields.io/badge/Pharo-9.0-informational)](https://pharo.org)
 [![Pharo 10](https://img.shields.io/badge/Pharo-10-informational)](https://pharo.org)
+[![Pharo 11](https://img.shields.io/badge/Pharo-11-informational)](https://pharo.org)
 
 > *Name origin*: This project started as a topological model, which can be
 > shortened to [**Topo**](https://es.wikipedia.org/wiki/Talpidae), the Spanish
@@ -32,7 +33,7 @@ Mole provides a model for graphs, both directed and undirected.
 
 ## Installation
 
-To load the project in a Pharo image follow this [instructions](docs/how-to/how-to-load-in-pharo.md).
+To load the project in a Pharo image follow these [instructions](docs/how-to/how-to-load-in-pharo.md).
 
 ## Contributing
 
