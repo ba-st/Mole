@@ -53,7 +53,7 @@ the right type of edge and adding the vertices included in the edges automatical
 
 In addition to the messages common to all graphs, undirected graphs also understand:
 
-- `degreeOf: aVertex`  The degree (or valency) of a vertex is the number of
+- `degreeOf: aVertex` The degree (or valency) of a vertex is the number of
   edges incident to the vertex. A special case is a self-loop, which adds two
   to the degree.
 - `edgesIncidentTo: aVertex`
