@@ -1,0 +1,10 @@
+RwSimpleProjectLoadComponentV2 {
+	#name : 'Development',
+	#condition : 'common',
+	#projectNames : [ ],
+	#componentNames : [
+		'Tests'
+	],
+	#packageNames : [ ],
+	#comment : ''
+}

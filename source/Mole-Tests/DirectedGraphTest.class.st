@@ -212,7 +212,7 @@ DirectedGraphTest >> testTopologicalSort [
 		connect: 2 to: 3;
 		connect: 3 to: 4;
 		connect: 3 to: 6;
-		buildDirected..
+		buildDirected.
 
 	topologicalOrder := graph topologicalSort.
 	self assert: topologicalOrder size equals: 5.
@@ -238,7 +238,7 @@ DirectedGraphTest >> testTopologicalSortFSUExample [
 		connect: 'shirt' to: 'belt';
 		connect: 'shirt' to: 'tie';
 		connect: 'tie' to: 'jacket';
-		buildDirected..
+		buildDirected.
 
 	sort := graph topologicalSort.
 

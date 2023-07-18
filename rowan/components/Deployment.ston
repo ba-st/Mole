@@ -1,0 +1,12 @@
+RwSimpleProjectLoadComponentV2 {
+	#name : 'Deployment',
+	#condition : 'common',
+	#projectNames : [
+		'Buoy-Deployment'
+	],
+	#componentNames : [ ],
+	#packageNames : [
+		'Mole'
+	],
+	#comment : ''
+}

@@ -1,0 +1,14 @@
+RwSimpleProjectLoadComponentV2 {
+	#name : 'Tests',
+	#condition : 'common',
+	#projectNames : [
+		'Buoy-SUnit'
+	],
+	#componentNames : [
+		'Deployment'
+	],
+	#packageNames : [
+		'Mole-Tests'
+	],
+	#comment : ''
+}

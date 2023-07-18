@@ -1,0 +1,18 @@
+RwLoadSpecificationV2 {
+  #specName: 'Buoy-SUnit',
+	#projectName : 'Buoy-SUnit',
+  #gitUrl : 'git@github.com:ba-st/Buoy.git',
+	#revision : 'rowan-support',
+	#projectSpecFile : 'rowan/project.ston',
+	#componentNames : [
+		'SUnit-Dependent-Extensions'
+	],
+	#platformProperties : {
+		'gemstone' : {
+			'allusers' : {
+				#defaultSymbolDictName : 'Buoy'
+			}
+		}
+	},
+	#comment : 'Loading spec for the continuous integration setup'
+}

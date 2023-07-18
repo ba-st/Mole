@@ -1,0 +1,17 @@
+RwLoadSpecificationV2 {
+	#projectName : 'Mole',
+	#projectSpecFile : 'rowan/project.ston',
+	#componentNames : [
+		'Deployment',
+		'Tests',
+		'Development'
+	],
+	#platformProperties : {
+		'gemstone' : {
+			'allusers' : {
+				#defaultSymbolDictName : 'Mole'
+			}
+		}
+	},
+	#comment : ''
+}
