@@ -17,10 +17,10 @@ Each graph can understand the following messages:
 
 ### Converting
 
-- `withoutVertex: aVertex` Returns a new graph excluding the vertex and all it's
+- `withoutVertex: aVertex` Returns a new graph excluding the vertex and all its
   incident edges
 - `withoutVertices: aVertexCollection` Returns a new graph excluding the vertices
-  and all it's incident edges
+  and all its incident edges
 
 ### Testing
 
