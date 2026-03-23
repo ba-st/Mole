@@ -2,12 +2,13 @@
 I'm the baseline of Mole
 "
 Class {
-	#name : #BaselineOfMole,
-	#superclass : #BaselineOf,
-	#category : #BaselineOfMole
+	#name : 'BaselineOfMole',
+	#superclass : 'BaselineOf',
+	#category : 'BaselineOfMole',
+	#package : 'BaselineOfMole'
 }
 
-{ #category : #baselines }
+{ #category : 'baselines' }
 BaselineOfMole >> baseline: spec [
 
 	<baseline>
@@ -23,7 +24,7 @@ BaselineOfMole >> baseline: spec [
 			]
 ]
 
-{ #category : #baselines }
+{ #category : 'baselines' }
 BaselineOfMole >> baselineMole: spec [
 
 	spec
@@ -33,17 +34,17 @@ BaselineOfMole >> baselineMole: spec [
 		group: 'Tests' with: #('Mole-Tests')
 ]
 
-{ #category : #baselines }
+{ #category : 'accessing' }
 BaselineOfMole >> projectClass [
 
 	^ MetacelloCypressBaselineProject
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 BaselineOfMole >> setUpDependencies: spec [
 
 	spec
-		baseline: 'Buoy' with: [ spec repository: 'github://ba-st/Buoy:v6' ];
+		baseline: 'Buoy' with: [ spec repository: 'github://ba-st/Buoy:v8' ];
 		project: 'Buoy-Deployment' copyFrom: 'Buoy' with: [ spec loads: 'Deployment' ];
 		project: 'Buoy-SUnit' copyFrom: 'Buoy' with: [ spec loads: 'Dependent-SUnit-Extensions' ];
 		project: 'Buoy-Tools' copyFrom: 'Buoy' with: [ spec loads: 'Tools' ].
